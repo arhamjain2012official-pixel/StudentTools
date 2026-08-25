@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>StudentTools - Free Student Calculators & Study Tools</title>
+
+<meta name="description" content="Free online student tools including percentage, grade, age and study calculators. Simple, fast and easy to use.">
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="cursor-glow"></div>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+<a href="#" class="logo">
+StudentTools
+</a>
+
+<ul class="nav-links">
+
+<li><a href="#tools">Tools</a></li>
+<li><a href="#about">About</a></li>
+<li><a href="#faq">FAQ</a></li>
+
+</ul>
+
+<div class="nav-right">
+
+<button id="themeBtn">🌙</button>
+
+<a href="#tools" class="btn">
+Explore Tools
+</a>
+
+</div>
+
+</nav>
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+<div class="hero-left">
+
+<span class="badge">
+🎓 Free Student Tools
+</span>
+
+<h1>
+Study smarter.
+<span>Calculate faster.</span>
+</h1>
+
+<p>
+Free online tools designed for students.
+Calculate grades, percentages, ages, study time and more without complicated software.
+</p>
+
+<a href="#tools" class="hero-btn">
+Explore Tools →
+</a>
+
+</div>
+
+
+<div class="hero-right">
+
+<div class="hero-card">
+
+<div class="hero-card-icon">
+🧮
+</div>
+
+<h3>
+Your Student Toolkit
+</h3>
+
+<p>
+Useful calculators and study tools in one simple place.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- TOOLS -->
+
+<section class="tools" id="tools">
+
+<div class="section-title">
+
+<h2>Student Tools</h2>
+
+<p>
+Simple tools for everyday school and study tasks.
+</p>
+
+</div>
+
+
+<div class="tool-grid">
+
+
+<a href="#percentage" class="tool-card">
+
+<div class="tool-icon">
+%
+</div>
+
+<h3>Percentage Calculator</h3>
+
+<p>
+Calculate percentages quickly and easily.
+</p>
+
+</a>
+
+
+<a href="#grade" class="tool-card">
+
+<div class="tool-icon">
+📊
+</div>
+
+<h3>Grade Calculator</h3>
+
+<p>
+Calculate your marks and percentage.
+</p>
+
+</a>
+
+
+<a href="#age" class="tool-card">
+
+<div class="tool-icon">
+🎂
+</div>
+
+<h3>Age Calculator</h3>
+
+<p>
+Find your exact age from your birth date.
+</p>
+
+</a>
+
+
+<a href="#word" class="tool-card">
+
+<div class="tool-icon">
+📝
+</div>
+
+<h3>Word Counter</h3>
+
+<p>
+Count words and characters instantly.
+</p>
+
+</a>
+
+
+<a href="#unit" class="tool-card">
+
+<div class="tool-icon">
+📏
+</div>
+
+<h3>Unit Converter</h3>
+
+<p>
+Convert common units quickly.
+</p>
+
+</a>
+
+
+<a href="#timer" class="tool-card">
+
+<div class="tool-icon">
+⏱️
+</div>
+
+<h3>Study Timer</h3>
+
+<p>
+Use a simple timer for focused study sessions.
+</p>
+
+</a>
+
+
+<a href="#qr" class="tool-card">
+
+<div class="tool-icon">
+🔳
+</div>
+
+<h3>QR Generator</h3>
+
+<p>
+Create QR codes for text, websites and more.
+</p>
+
+</a>
+
+
+<a href="#calculator" class="tool-card">
+
+<div class="tool-icon">
+🧮
+</div>
+
+<h3>Basic Calculator</h3>
+
+<p>
+Perform everyday mathematical calculations.
+</p>
+
+</a>
+
+
+<a href="#days" class="tool-card">
+
+<div class="tool-icon">
+📅
+</div>
+
+<h3>Days Calculator</h3>
+
+<p>
+Calculate the number of days between dates.
+</p>
+
+</a>
+
+</div>
+
+</section>
+
+
+<!-- PERCENTAGE -->
+
+<section class="calculator-section" id="percentage">
+
+<div class="section-title">
+
+<h2>Percentage Calculator</h2>
+
+<p>
+Calculate percentages instantly.
+</p>
+
+</div>
+
+<div class="calculator-box">
+
+<div class="input-group">
+
+<label>What is X% of Y?</label>
+
+<input
+id="percentValue"
+type="number"
+placeholder="Percentage">
+
+</div>
+
+<div class="input-group">
+
+<label>Number</label>
+
+<input
+id="percentNumber"
+type="number"
+placeholder="Number">
+
+</div>
+
+<button class="calculate-btn" onclick="calculatePercentage()">
+Calculate
+</button>
+
+<div class="result" id="percentageResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- GRADE -->
+
+<section class="calculator-section" id="grade">
+
+<div class="section-title">
+
+<h2>Grade Calculator</h2>
+
+<p>
+Calculate your total marks and percentage.
+</p>
+
+</div>
+
+<div class="calculator-box">
+
+<div class="input-group">
+
+<label>Marks Obtained</label>
+
+<input
+id="marksObtained"
+type="number"
+placeholder="Example: 425">
+
+</div>
+
+<div class="input-group">
+
+<label>Total Marks</label>
+
+<input
+id="totalMarks"
+type="number"
+placeholder="Example: 500">
+
+</div>
+
+<button class="calculate-btn" onclick="calculateGrade()">
+Calculate Grade
+</button>
+
+<div class="result" id="gradeResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- AGE -->
+
+<section class="calculator-section" id="age">
+
+<div class="section-title">
+
+<h2>Age Calculator</h2>
+
+<p>
+Find your current age.
+</p>
+
+</div>
+
+<div class="calculator-box">
+
+<div class="input-group">
+
+<label>Date of Birth</label>
+
+<input
+id="birthDate"
+type="date">
+
+</div>
+
+<button class="calculate-btn" onclick="calculateAge()">
+Calculate Age
+</button>
+
+<div class="result" id="ageResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- WORD COUNTER -->
+
+<section class="calculator-section" id="word">
+
+<div class="section-title">
+
+<h2>Word Counter</h2>
+
+<p>
+Count words and characters in your text.
+</p>
+
+</div>
+
+<div class="calculator-box">
+
+<textarea
+id="wordText"
+class="tool-input"
+rows="8"
+placeholder="Type or paste your text here..."
+></textarea>
+
+<div class="result" id="wordResult" style="display:block;">
+Words: 0 | Characters: 0
+</div>
+
+</div>
+
+</section>
+
+
+<!-- UNIT CONVERTER -->
+
+<section class="calculator-section" id="unit">
+
+<div class="section-title">
+
+<h2>Unit Converter</h2>
+
+<p>
+Convert kilometers to miles and miles to kilometers.
+</p>
+
+</div>
+
+<div class="calculator-box">
+
+<div class="input-group">
+
+<label>Value</label>
+
+<input
+id="unitValue"
+type="number"
+placeholder="Enter value">
+
+</div>
+
+<div class="input-group">
+
+<label>Conversion</label>
+
+<select id="unitType">
+
+<option value="km-miles">
+Kilometers → Miles
+</option>
+
+<option value="miles-km">
+Miles → Kilometers
+</option>
+
+<option value="kg-lb">
+Kilograms → Pounds
+</option>
+
+<option value="lb-kg">
+Pounds → Kilograms
+</option>
+
+</select>
+
+</div>
+
+<button class="calculate-btn" onclick="convertUnit()">
+Convert
+</button>
+
+<div class="result" id="unitResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- STUDY TIMER -->
+
+<section class="calculator-section" id="timer">
+
+<div class="section-title">
+
+<h2>Study Timer</h2>
+
+<p>
+Use focused study sessions to stay productive.
+</p>
+
+</div>
+
+<div class="calculator-box">
+
+<h3 id="timerDisplay" style="text-align:center;font-size:48px;margin-bottom:25px;">
+25:00
+</h3>
+
+<button class="calculate-btn" onclick="startTimer()">
+Start
+</button>
+
+<br><br>
+
+<button class="calculate-btn" onclick="resetTimer()">
+Reset
+</button>
+
+</div>
+
+</section>
+
+
+<!-- BASIC CALCULATOR -->
+
+<section class="calculator-section" id="calculator">
+
+<div class="section-title">
+
+<h2>Basic Calculator</h2>
+
+<p>
+Perform simple mathematical calculations.
+</p>
+
+</div>
+
+<div class="calculator-box">
+
+<div class="input-group">
+
+<label>Expression</label>
+
+<input
+id="calcInput"
+type="text"
+placeholder="Example: 25 + 15 × 2">
+
+</div>
+
+<button class="calculate-btn" onclick="calculateExpression()">
+Calculate
+</button>
+
+<div class="result" id="calcResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- DAYS -->
+
+<section class="calculator-section" id="days">
+
+<div class="section-title">
+
+<h2>Days Between Dates</h2>
+
+<p>
+Find the number of days between two dates.
+</p>
+
+</div>
+
+<div class="calculator-box">
+
+<div class="input-group">
+
+<label>Start Date</label>
+
+<input
+id="startDate"
+type="date">
+
+</div>
+
+<div class="input-group">
+
+<label>End Date</label>
+
+<input
+id="endDate"
+type="date">
+
+</div>
+
+<button class="calculate-btn" onclick="calculateDays()">
+Calculate
+</button>
+
+<div class="result" id="daysResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- QR -->
+
+<section class="calculator-section" id="qr">
+
+<div class="section-title">
+
+<h2>QR Code Generator</h2>
+
+<p>
+Create a QR code for text or a website.
+</p>
+
+</div>
+
+<div class="calculator-box">
+
+<div class="input-group">
+
+<label>Text or Website</label>
+
+<input
+id="qrInput"
+type="text"
+placeholder="Enter text or URL">
+
+</div>
+
+<button class="calculate-btn" onclick="generateStudentQR()">
+Generate QR
+</button>
+
+<div style="text-align:center;margin-top:25px;">
+
+<canvas id="studentQR"></canvas>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ABOUT / SEO CONTENT -->
+
+<section class="content-section" id="about">
+
+<div class="content-container">
+
+<h2>Free Online Student Tools</h2>
+
+<p>
+StudentTools is a collection of simple online calculators and study utilities designed to make everyday school tasks easier.
+</p>
+
+<h3>Why use online student tools?</h3>
+
+<p>
+Students often need quick calculations while studying, completing assignments, checking marks or planning their time. Small tools can save time and reduce unnecessary calculations.
+</p>
+
+<h3>Useful tools for students</h3>
+
+<ul>
+
+<li>Calculate percentages and marks.</li>
+
+<li>Check your current age.</li>
+
+<li>Count words in an assignment.</li>
+
+<li>Convert common units.</li>
+
+<li>Plan focused study sessions.</li>
+
+<li>Calculate the number of days between dates.</li>
+
+</ul>
+
+<h3>Free and simple</h3>
+
+<p>
+The tools on StudentTools are designed to be straightforward and easy to use. No complicated software is required.
+</p>
+
+</div>
+
+</section>
+
+
+<!-- FAQ -->
+
+<section class="faq-section" id="faq">
+
+<div class="section-title">
+
+<h2>Frequently Asked Questions</h2>
+
+<p>
+Common questions about StudentTools.
+</p>
+
+</div>
+
+<div class="faq-container">
+
+<div class="faq-item">
+
+<div class="faq-question">
+Are these tools free?
+<span>+</span>
+</div>
+
+<div class="faq-answer">
+Yes. The tools are designed to be available online without requiring paid software.
+</div>
+
+</div>
+
+
+<div class="faq-item">
+
+<div class="faq-question">
+Can I use these tools on my phone?
+<span>+</span>
+</div>
+
+<div class="faq-answer">
+Yes. The website is designed to work on phones, tablets and computers.
+</div>
+
+</div>
+
+
+<div class="faq-item">
+
+<div class="faq-question">
+Do I need to install anything?
+<span>+</span>
+</div>
+
+<div class="faq-answer">
+No. The tools run directly in your web browser.
+</div>
+
+</div>
+
+
+<div class="faq-item">
+
+<div class="faq-question">
+Who are these tools for?
+<span>+</span>
+</div>
+
+<div class="faq-answer">
+They are designed primarily for students and anyone who needs quick everyday calculations and study utilities.
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+<div class="footer-container">
+
+<div class="footer-brand">
+
+<h2>StudentTools</h2>
+
+<p>
+Simple online tools for students and everyday learning.
+</p>
+
+</div>
+
+<div class="footer-links">
+
+<div>
+
+<h4>Tools</h4>
+
+<a href="#percentage">Percentage</a>
+<a href="#grade">Grade</a>
+<a href="#age">Age</a>
+<a href="#word">Word Counter</a>
+
+</div>
+
+<div>
+
+<h4>More</h4>
+
+<a href="#unit">Unit Converter</a>
+<a href="#timer">Study Timer</a>
+<a href="#faq">FAQ</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer-bottom">
+
+© 2026 StudentTools. All rights reserved.
+
+</div>
+
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
