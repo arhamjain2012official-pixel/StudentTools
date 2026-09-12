@@ -1,29 +1,1316 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>StudentTools — Free Student Productivity Toolkit</title><meta name="description" content="Free calculators, converters, study tools, notes and productivity utilities for students."><meta name="robots" content="index,follow"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"></head><body>
-<header class="topbar"><a class="logo" href="#home"><span>Student</span>Tools</a><nav><a href="#tools">Tools</a><a href="#study">Study</a><a href="#about">About</a><a href="#faq">FAQ</a></nav><div class="actions"><button id="themeBtn" class="icon" title="Toggle theme">☾</button><a class="btn primary small" href="#tools">Explore Tools</a></div></header>
-<main id="home"><section class="hero"><div><div class="eyebrow">🎓 FREE STUDENT PRODUCTIVITY TOOLKIT</div><h1>Study smarter.<br><span>Get more done.</span></h1><p>Calculators, converters, study utilities, notes and productivity tools in one fast browser-based workspace.</p><div class="hero-actions"><a class="btn primary" href="#tools">Explore all tools →</a><a class="btn secondary" href="#study">Study tools</a></div><div class="trust"><span>⚡ Instant results</span><span>📱 Responsive</span><span>🔒 No account required</span></div></div><div class="hero-card"><div class="muted">● Your toolkit</div><strong id="toolCount">18</strong><span class="muted">useful tools</span><div class="mini"><div>📊<small>Grades</small></div><div>🧮<small>Math</small></div><div>⏱️<small>Focus</small></div><div>📝<small>Notes</small></div></div><a class="link" href="#tools">Open toolkit →</a></div></section>
-<section class="quick"><div class="heading"><div><label>QUICK ACCESS</label><h2>Find a tool quickly</h2></div><div class="search">⌕<input id="search" placeholder="Search tools..."></div></div><div id="recent" class="chips"></div></section>
-<section class="tools" id="tools"><div class="heading center"><label>TOOLKIT</label><h2>Everything in one place</h2><p>Choose a tool, enter your information and get a clear result.</p></div><div class="tabs"><button class="tab active" data-cat="all">All</button><button class="tab" data-cat="math">Math</button><button class="tab" data-cat="study">Study</button><button class="tab" data-cat="utility">Utilities</button></div><div id="grid" class="grid">
-<article class="card" data-id="percentage" data-cat="math" data-name="Percentage Calculator Find a percentage of any number quickly."><button class=fav>☆</button><div class=ico>%</div><h3>Percentage Calculator</h3><p>Find a percentage of any number quickly.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="grade" data-cat="math" data-name="Grade Calculator Calculate marks and your percentage."><button class=fav>☆</button><div class=ico>📊</div><h3>Grade Calculator</h3><p>Calculate marks and your percentage.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="gpa" data-cat="math" data-name="GPA Calculator Calculate a weighted grade-point average."><button class=fav>☆</button><div class=ico>🎓</div><h3>GPA Calculator</h3><p>Calculate a weighted grade-point average.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="average" data-cat="math" data-name="Average Calculator Find the average of a list of numbers."><button class=fav>☆</button><div class=ico>📈</div><h3>Average Calculator</h3><p>Find the average of a list of numbers.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="discount" data-cat="math" data-name="Discount Calculator Calculate savings and final sale price."><button class=fav>☆</button><div class=ico>🏷️</div><h3>Discount Calculator</h3><p>Calculate savings and final sale price.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="fraction" data-cat="math" data-name="Fraction Calculator Add, subtract, multiply or divide fractions."><button class=fav>☆</button><div class=ico>½</div><h3>Fraction Calculator</h3><p>Add, subtract, multiply or divide fractions.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="calculator" data-cat="math" data-name="Calculator Handle everyday arithmetic expressions."><button class=fav>☆</button><div class=ico>🧮</div><h3>Calculator</h3><p>Handle everyday arithmetic expressions.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="age" data-cat="utility" data-name="Age Calculator Calculate age from a date of birth."><button class=fav>☆</button><div class=ico>🎂</div><h3>Age Calculator</h3><p>Calculate age from a date of birth.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="days" data-cat="utility" data-name="Days Calculator Find the days between two dates."><button class=fav>☆</button><div class=ico>📅</div><h3>Days Calculator</h3><p>Find the days between two dates.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="unit" data-cat="utility" data-name="Unit Converter Convert common distance, weight and temperature units."><button class=fav>☆</button><div class=ico>📏</div><h3>Unit Converter</h3><p>Convert common distance, weight and temperature units.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="word" data-cat="study" data-name="Word Counter Count words, characters and lines."><button class=fav>☆</button><div class=ico>📝</div><h3>Word Counter</h3><p>Count words, characters and lines.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="timer" data-cat="study" data-name="Focus Timer Run focused study sessions."><button class=fav>☆</button><div class=ico>⏱️</div><h3>Focus Timer</h3><p>Run focused study sessions.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="notes" data-cat="study" data-name="Study Notes Write and save notes in your browser."><button class=fav>☆</button><div class=ico>📒</div><h3>Study Notes</h3><p>Write and save notes in your browser.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="random" data-cat="study" data-name="Study Task Picker Pick a random study task."><button class=fav>☆</button><div class=ico>🎲</div><h3>Study Task Picker</h3><p>Pick a random study task.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="qr" data-cat="utility" data-name="QR Generator Create a QR code from text or a URL."><button class=fav>☆</button><div class=ico>🔳</div><h3>QR Generator</h3><p>Create a QR code from text or a URL.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="change" data-cat="math" data-name="Percentage Change Find percentage increase or decrease."><button class=fav>☆</button><div class=ico>↕️</div><h3>Percentage Change</h3><p>Find percentage increase or decrease.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="timecalc" data-cat="utility" data-name="Time Difference Find the duration between two times."><button class=fav>☆</button><div class=ico>🕒</div><h3>Time Difference</h3><p>Find the duration between two times.</p><button class=open>Open tool →</button></article>
-<article class="card" data-id="countdown" data-cat="study" data-name="Exam Countdown See how much time remains until an exam."><button class=fav>☆</button><div class=ico>🚀</div><h3>Exam Countdown</h3><p>See how much time remains until an exam.</p><button class=open>Open tool →</button></article>
-</div><p id="empty" class="muted empty">No tools match your search.</p></section>
-<section class="workspace"><div class="heading center"><label>WORKSPACE</label><h2 id="workTitle">Choose a tool</h2><p>Selected tools open here so the page stays clean and easy to use.</p></div><div id="workspace" class="workspace-box"><div class="placeholder">🛠️<h3>Your tool workspace</h3><p>Choose any tool above to begin.</p></div></div></section>
-<section class="banner" id="study"><div><label>STUDY MODE</label><h2>Build a simple study routine</h2><p>Pick a task, start a focus session, then save what you learned in Study Notes.</p></div><a class="btn primary" href="#tools">Start studying →</a></section>
-<section class="content" id="about"><label>ABOUT STUDENTTOOLS</label><h2>A practical toolkit for everyday student tasks</h2><p>StudentTools brings commonly needed calculators and study utilities into one browser-based workspace. The goal is to reduce time spent searching for small tools so students can focus on their actual work.</p><div class="columns"><div><h3>For calculations</h3><p>Use percentage, grade, GPA, average, discount, fraction, date and unit tools to check repetitive calculations.</p></div><div><h3>For studying</h3><p>Use the focus timer, notes, word counter and task picker to organize study sessions and written work.</p></div><div><h3>For everyday use</h3><p>Age, time difference and QR generation are available from the same toolkit without separate software.</p></div></div><h3>Use calculators as study aids</h3><p>Calculators can handle repetitive work and help check results, but understanding the method behind important school calculations remains useful. For important work, compare results with your own working and your teacher's instructions.</p></section>
-<section class="faq" id="faq"><div class="heading center"><label>FAQ</label><h2>Frequently asked questions</h2></div><div class="faq-list"><details><summary>Are the tools free?</summary><p>Yes. The tools are designed to be available through a normal web browser without paid calculator software.</p></details><details><summary>Do I need an account?</summary><p>No account is required. Notes and preferences can be stored locally in your browser.</p></details><details><summary>Can I use StudentTools on my phone?</summary><p>Yes. The interface is responsive for phones, tablets and computers.</p></details><details><summary>Does Study Notes upload my notes?</summary><p>The notes feature uses your browser's local storage, so saved notes remain in that browser unless site data is cleared.</p></details><details><summary>Can calculators replace learning?</summary><p>They are study aids and convenient calculators. For schoolwork, understanding the calculation method and checking important results is still recommended.</p></details></div></section></main>
-<footer><div class="foot"><div><a class="logo" href="#home"><span>Student</span>Tools</a><p>Simple online tools for students and everyday learning.</p></div><div class="footlinks"><a href="#tools">Tools</a><a href="#study">Study</a><a href="#about">About</a><a href="#faq">FAQ</a></div></div><div class="copy">© 2026 StudentTools. All rights reserved.</div></footer><div id="toast" class="toast"></div><script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script><script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+        content="StudentTools is a free student productivity toolkit with calculators, study tools, notes, converters, QR generation and more.">
+
+    <meta name="robots" content="index, follow">
+
+    <title>StudentTools — Free Student Productivity Toolkit</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- BACKGROUND -->
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+
+        <a href="#home" class="logo">
+            <span>Student</span>Tools
+        </a>
+
+        <nav class="nav-links">
+            <a href="#tools">Tools</a>
+            <a href="#study">Study</a>
+            <a href="#about">About</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+
+        <div class="nav-actions">
+
+            <button id="themeBtn" class="icon-button" aria-label="Toggle dark mode">
+                🌙
+            </button>
+
+            <a href="#tools" class="nav-button">
+                Explore Tools
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <!-- HERO -->
+        <section class="hero" id="home">
+
+            <div class="hero-content">
+
+                <div class="hero-badge">
+                    🎓 Free Student Productivity Toolkit
+                </div>
+
+                <h1>
+                    Everything students need.
+                    <span>In one place.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Calculate marks, manage study sessions, write notes,
+                    convert units, create QR codes and use helpful everyday
+                    tools — all directly in your browser.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="#tools" class="primary-button">
+                        Explore Tools
+                        <span>→</span>
+                    </a>
+
+                    <a href="#study" class="secondary-button">
+                        Study Mode
+                    </a>
+
+                </div>
+
+                <div class="hero-features">
+
+                    <span>
+                        ⚡ Instant results
+                    </span>
+
+                    <span>
+                        📱 Mobile friendly
+                    </span>
+
+                    <span>
+                        🔒 No account required
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-dashboard">
+
+                <div class="dashboard-header">
+
+                    <div>
+                        <small>STUDENTTOOLS</small>
+                        <h3>Your Toolkit</h3>
+                    </div>
+
+                    <span class="status-dot"></span>
+
+                </div>
+
+
+                <div class="dashboard-main">
+
+                    <div class="dashboard-number">
+                        18
+                    </div>
+
+                    <div class="dashboard-label">
+                        useful tools
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-grid">
+
+                    <div class="dashboard-card">
+                        <span>📊</span>
+                        <strong>Grades</strong>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span>🧮</span>
+                        <strong>Math</strong>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span>⏱️</span>
+                        <strong>Focus</strong>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span>📝</span>
+                        <strong>Notes</strong>
+                    </div>
+
+                </div>
+
+
+                <a href="#tools" class="dashboard-link">
+                    Open toolkit →
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- QUICK SEARCH -->
+        <section class="quick-access">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-label">
+                        QUICK ACCESS
+                    </span>
+
+                    <h2>
+                        Find a tool quickly
+                    </h2>
+                </div>
+
+                <div class="tool-search">
+
+                    <span>⌕</span>
+
+                    <input
+                        type="search"
+                        id="toolSearch"
+                        placeholder="Search calculators, study tools..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="recent-tools" id="recentTools">
+
+                <span class="recent-placeholder">
+                    Your recently used tools will appear here.
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- TOOLS -->
+        <section class="tools-section" id="tools">
+
+            <div class="section-heading centered">
+
+                <span class="section-label">
+                    STUDENT TOOLKIT
+                </span>
+
+                <h2>
+                    Tools for school and everyday life
+                </h2>
+
+                <p>
+                    Choose a tool, enter your information and get a clear result.
+                </p>
+
+            </div>
+
+
+            <!-- CATEGORY FILTER -->
+            <div class="category-tabs">
+
+                <button class="category-tab active" data-category="all">
+                    All
+                </button>
+
+                <button class="category-tab" data-category="math">
+                    Math
+                </button>
+
+                <button class="category-tab" data-category="study">
+                    Study
+                </button>
+
+                <button class="category-tab" data-category="utility">
+                    Utilities
+                </button>
+
+            </div>
+
+
+            <!-- TOOL GRID -->
+            <div class="tool-grid" id="toolGrid">
+
+
+                <!-- PERCENTAGE -->
+                <article
+                    class="tool-card"
+                    data-name="percentage calculator percent"
+                    data-category="math"
+                    data-tool="percentage"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon purple">
+                        %
+                    </div>
+
+                    <h3>
+                        Percentage Calculator
+                    </h3>
+
+                    <p>
+                        Find a percentage of a number quickly and easily.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- GRADE -->
+                <article
+                    class="tool-card"
+                    data-name="grade calculator marks percentage"
+                    data-category="math"
+                    data-tool="grade"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon blue">
+                        📊
+                    </div>
+
+                    <h3>
+                        Grade Calculator
+                    </h3>
+
+                    <p>
+                        Calculate marks and percentage from your score.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- GPA -->
+                <article
+                    class="tool-card"
+                    data-name="gpa calculator grade point average"
+                    data-category="math"
+                    data-tool="gpa"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon green">
+                        🎓
+                    </div>
+
+                    <h3>
+                        GPA Calculator
+                    </h3>
+
+                    <p>
+                        Calculate a weighted grade-point average.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- AVERAGE -->
+                <article
+                    class="tool-card"
+                    data-name="average calculator mean"
+                    data-category="math"
+                    data-tool="average"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon orange">
+                        📈
+                    </div>
+
+                    <h3>
+                        Average Calculator
+                    </h3>
+
+                    <p>
+                        Find the average of multiple numbers.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- DISCOUNT -->
+                <article
+                    class="tool-card"
+                    data-name="discount calculator sale price savings"
+                    data-category="math"
+                    data-tool="discount"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon yellow">
+                        🏷️
+                    </div>
+
+                    <h3>
+                        Discount Calculator
+                    </h3>
+
+                    <p>
+                        Calculate savings and final sale prices.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- FRACTION -->
+                <article
+                    class="tool-card"
+                    data-name="fraction calculator fractions"
+                    data-category="math"
+                    data-tool="fraction"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon pink">
+                        ½
+                    </div>
+
+                    <h3>
+                        Fraction Calculator
+                    </h3>
+
+                    <p>
+                        Add, subtract, multiply and divide fractions.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- CALCULATOR -->
+                <article
+                    class="tool-card"
+                    data-name="basic calculator math calculator"
+                    data-category="math"
+                    data-tool="calculator"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon purple">
+                        🧮
+                    </div>
+
+                    <h3>
+                        Basic Calculator
+                    </h3>
+
+                    <p>
+                        Perform everyday mathematical calculations.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- AGE -->
+                <article
+                    class="tool-card"
+                    data-name="age calculator birthday"
+                    data-category="utility"
+                    data-tool="age"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon pink">
+                        🎂
+                    </div>
+
+                    <h3>
+                        Age Calculator
+                    </h3>
+
+                    <p>
+                        Calculate your age from your birth date.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- DAYS -->
+                <article
+                    class="tool-card"
+                    data-name="days between dates date calculator"
+                    data-category="utility"
+                    data-tool="days"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon blue">
+                        📅
+                    </div>
+
+                    <h3>
+                        Days Calculator
+                    </h3>
+
+                    <p>
+                        Find the number of days between two dates.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- UNIT -->
+                <article
+                    class="tool-card"
+                    data-name="unit converter km miles kilograms pounds"
+                    data-category="utility"
+                    data-tool="unit"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon green">
+                        📏
+                    </div>
+
+                    <h3>
+                        Unit Converter
+                    </h3>
+
+                    <p>
+                        Convert common distance and weight units.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- WORD -->
+                <article
+                    class="tool-card"
+                    data-name="word counter character counter text"
+                    data-category="study"
+                    data-tool="word"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon orange">
+                        📝
+                    </div>
+
+                    <h3>
+                        Word Counter
+                    </h3>
+
+                    <p>
+                        Count words, characters and lines in your text.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- TIMER -->
+                <article
+                    class="tool-card"
+                    data-name="focus timer study timer pomodoro"
+                    data-category="study"
+                    data-tool="timer"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon blue">
+                        ⏱️
+                    </div>
+
+                    <h3>
+                        Focus Timer
+                    </h3>
+
+                    <p>
+                        Run focused study sessions with a countdown.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- NOTES -->
+                <article
+                    class="tool-card"
+                    data-name="study notes notebook notes"
+                    data-category="study"
+                    data-tool="notes"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon yellow">
+                        📒
+                    </div>
+
+                    <h3>
+                        Study Notes
+                    </h3>
+
+                    <p>
+                        Write and save notes directly in your browser.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- TASK PICKER -->
+                <article
+                    class="tool-card"
+                    data-name="random study task picker"
+                    data-category="study"
+                    data-tool="random"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon purple">
+                        🎲
+                    </div>
+
+                    <h3>
+                        Study Task Picker
+                    </h3>
+
+                    <p>
+                        Get a random study task when you need a starting point.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- QR -->
+                <article
+                    class="tool-card"
+                    data-name="qr generator qr code website text"
+                    data-category="utility"
+                    data-tool="qr"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon blue">
+                        🔳
+                    </div>
+
+                    <h3>
+                        QR Generator
+                    </h3>
+
+                    <p>
+                        Create QR codes from text or website addresses.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- PERCENTAGE CHANGE -->
+                <article
+                    class="tool-card"
+                    data-name="percentage change increase decrease"
+                    data-category="math"
+                    data-tool="change"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon green">
+                        ↕️
+                    </div>
+
+                    <h3>
+                        Percentage Change
+                    </h3>
+
+                    <p>
+                        Calculate percentage increase or decrease.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- TIME DIFFERENCE -->
+                <article
+                    class="tool-card"
+                    data-name="time difference duration time calculator"
+                    data-category="utility"
+                    data-tool="timecalc"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon orange">
+                        🕒
+                    </div>
+
+                    <h3>
+                        Time Difference
+                    </h3>
+
+                    <p>
+                        Calculate the duration between two times.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+                <!-- EXAM COUNTDOWN -->
+                <article
+                    class="tool-card"
+                    data-name="exam countdown test countdown days remaining"
+                    data-category="study"
+                    data-tool="countdown"
+                >
+
+                    <button class="favorite-button" aria-label="Favorite">
+                        ☆
+                    </button>
+
+                    <div class="tool-icon pink">
+                        🚀
+                    </div>
+
+                    <h3>
+                        Exam Countdown
+                    </h3>
+
+                    <p>
+                        See how much time remains until an exam.
+                    </p>
+
+                    <button class="open-tool">
+                        Open tool →
+                    </button>
+
+                </article>
+
+
+            </div>
+
+
+            <div id="noTools" class="no-tools">
+                <div>🔎</div>
+                <h3>No tools found</h3>
+                <p>Try a different search or category.</p>
+            </div>
+
+        </section>
+
+
+        <!-- WORKSPACE -->
+        <section class="workspace" id="workspace">
+
+            <div class="section-heading centered">
+
+                <span class="section-label">
+                    TOOL WORKSPACE
+                </span>
+
+                <h2>
+                    Your selected tool
+                </h2>
+
+                <p id="workspaceHint">
+                    Choose any tool above to open it here.
+                </p>
+
+            </div>
+
+
+            <div class="workspace-box" id="workspaceBox">
+
+                <div class="workspace-placeholder">
+
+                    <div class="placeholder-icon">
+                        🛠️
+                    </div>
+
+                    <h3>
+                        Choose a tool to get started
+                    </h3>
+
+                    <p>
+                        Select a calculator or study utility from the toolkit above.
+                    </p>
+
+                    <a href="#tools" class="secondary-button">
+                        Browse tools
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- STUDY MODE -->
+        <section class="study-section" id="study">
+
+            <div class="study-content">
+
+                <span class="section-label">
+                    STUDY MODE
+                </span>
+
+                <h2>
+                    Turn your study time into focused sessions.
+                </h2>
+
+                <p>
+                    Pick a task, start the focus timer, write down important
+                    notes and keep track of what you accomplish.
+                </p>
+
+                <a href="#tools" class="primary-button">
+                    Start studying →
+                </a>
+
+            </div>
+
+
+            <div class="study-visual">
+
+                <div class="focus-card">
+                    <span>FOCUS SESSION</span>
+                    <strong>25:00</strong>
+                    <small>Ready when you are.</small>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ABOUT -->
+        <section class="content-section" id="about">
+
+            <div class="content-container">
+
+                <span class="section-label">
+                    ABOUT STUDENTTOOLS
+                </span>
+
+                <h2>
+                    A practical toolkit for everyday student tasks.
+                </h2>
+
+                <p>
+                    StudentTools brings commonly used calculators and study
+                    utilities together in one browser-based workspace.
+                    The aim is to make small academic and everyday tasks
+                    easier without requiring separate software for every job.
+                </p>
+
+
+                <div class="info-grid">
+
+                    <div class="info-card">
+
+                        <div class="info-icon">
+                            🧮
+                        </div>
+
+                        <h3>
+                            Calculations
+                        </h3>
+
+                        <p>
+                            Calculate percentages, grades, GPA, averages,
+                            fractions, discounts and other mathematical values.
+                        </p>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <div class="info-icon">
+                            📚
+                        </div>
+
+                        <h3>
+                            Study Tools
+                        </h3>
+
+                        <p>
+                            Use the focus timer, notes, word counter,
+                            exam countdown and task picker to organize study.
+                        </p>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <div class="info-icon">
+                            ⚙️
+                        </div>
+
+                        <h3>
+                            Everyday Utilities
+                        </h3>
+
+                        <p>
+                            Work with dates, times, measurements and QR codes
+                            using simple browser-based tools.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <h3>
+                    Use calculators as study aids
+                </h3>
+
+                <p>
+                    Calculators can save time on repetitive calculations and
+                    help check results. However, understanding the method
+                    behind an important calculation remains useful, especially
+                    for school assignments and examinations. When a result
+                    matters, compare it with your own working and the
+                    instructions provided by your teacher or school.
+                </p>
+
+
+                <h3>
+                    Designed to be simple
+                </h3>
+
+                <p>
+                    StudentTools is designed around a straightforward process:
+                    choose a tool, enter the required information and view the
+                    result. The interface is intended to work on computers,
+                    tablets and mobile devices.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- HOW IT WORKS -->
+        <section class="how-section">
+
+            <div class="section-heading centered">
+
+                <span class="section-label">
+                    HOW IT WORKS
+                </span>
+
+                <h2>
+                    Three simple steps
+                </h2>
+
+            </div>
+
+
+            <div class="steps">
+
+                <div class="step">
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+                    <h3>
+                        Choose
+                    </h3>
+
+                    <p>
+                        Find the calculator or study tool that matches your task.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+                    <h3>
+                        Enter
+                    </h3>
+
+                    <p>
+                        Enter the numbers, dates or text required by the tool.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+                    <h3>
+                        Get your result
+                    </h3>
+
+                    <p>
+                        Calculate, check the result and continue with your work.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FAQ -->
+        <section class="faq-section" id="faq">
+
+            <div class="section-heading centered">
+
+                <span class="section-label">
+                    FAQ
+                </span>
+
+                <h2>
+                    Frequently asked questions
+                </h2>
+
+                <p>
+                    Common questions about StudentTools.
+                </p>
+
+            </div>
+
+
+            <div class="faq-container">
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        Are StudentTools tools free?
+                        <span>+</span>
+                    </summary>
+
+                    <p>
+                        Yes. The tools are designed to be available through
+                        a normal web browser without requiring paid calculator
+                        software.
+                    </p>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        Do I need to create an account?
+                        <span>+</span>
+                    </summary>
+
+                    <p>
+                        No account is required for the main tools.
+                        Some preferences and notes can be stored locally
+                        in your browser.
+                    </p>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        Can I use StudentTools on my phone?
+                        <span>+</span>
+                    </summary>
+
+                    <p>
+                        Yes. The website is designed to work across phones,
+                        tablets and computers with a modern web browser.
+                    </p>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        Are my study notes uploaded?
+                        <span>+</span>
+                    </summary>
+
+                    <p>
+                        The Study Notes feature uses your browser's local
+                        storage. Your saved notes remain in that browser
+                        unless the site's stored data is cleared.
+                    </p>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        Can calculators replace learning?
+                        <span>+</span>
+                    </summary>
+
+                    <p>
+                        StudentTools is intended as a study aid and convenient
+                        calculator. Understanding the method behind important
+                        school calculations is still important.
+                    </p>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        What tools are available?
+                        <span>+</span>
+                    </summary>
+
+                    <p>
+                        StudentTools currently includes percentage, grade,
+                        GPA, average, discount, fraction, basic calculator,
+                        age, date, unit, word count, focus timer, notes,
+                        QR generation, percentage change, time difference,
+                        study task selection and exam countdown tools.
+                    </p>
+
+                </details>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <div class="footer-content">
+
+            <div class="footer-brand">
+
+                <a href="#home" class="logo">
+                    <span>Student</span>Tools
+                </a>
+
+                <p>
+                    Simple online tools for students and everyday learning.
+                </p>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h4>
+                    Tools
+                </h4>
+
+                <a href="#tools">
+                    All Tools
+                </a>
+
+                <a href="#study">
+                    Study Mode
+                </a>
+
+                <a href="#about">
+                    About
+                </a>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h4>
+                    Information
+                </h4>
+
+                <a href="#faq">
+                    FAQ
+                </a>
+
+                <a href="#how-it-works">
+                    How It Works
+                </a>
+
+                <a href="#home">
+                    Back to top
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <span>
+                © 2026 StudentTools. All rights reserved.
+            </span>
+
+            <span>
+                Built for students.
+            </span>
+
+        </div>
+
+    </footer>
+
+
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
+
+
+    <!-- QR LIBRARY -->
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
+    <!-- MAIN SCRIPT -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>
