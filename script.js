@@ -1,11 +1,1642 @@
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],toast=m=>{let t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove("show"),2000)},fmt=n=>Number.isFinite(n)?Number(n.toFixed(6)).toString():"Invalid result";
-const names={percentage:"Percentage Calculator",grade:"Grade Calculator",gpa:"GPA Calculator",average:"Average Calculator",discount:"Discount Calculator",fraction:"Fraction Calculator",calculator:"Calculator",age:"Age Calculator",days:"Days Calculator",unit:"Unit Converter",word:"Word Counter",timer:"Focus Timer",notes:"Study Notes",random:"Study Task Picker",qr:"QR Generator",change:"Percentage Change",timecalc:"Time Difference",countdown:"Exam Countdown"};
-let favs=JSON.parse(localStorage.st_favs||"[]"),recent=JSON.parse(localStorage.st_recent||"[]");
-function state(){localStorage.st_favs=JSON.stringify(favs);localStorage.st_recent=JSON.stringify(recent)}function renderFav(){ $$(".card").forEach(c=>{let b=c.querySelector(".fav"),id=c.dataset.id;b.textContent=favs.includes(id)?"★":"☆";b.classList.toggle("active",favs.includes(id))})}function renderRecent(){let r=$("#recent");r.innerHTML="";let a=recent.filter(x=>names[x]).slice(0,7);if(!a.length){r.innerHTML='<span class="muted">Recently opened tools will appear here.</span>';return}a.forEach(id=>{let b=document.createElement("button");b.className="chip";b.textContent=names[id];b.onclick=()=>openTool(id);r.appendChild(b)})}renderFav();renderRecent();
-$$('.fav').forEach(b=>b.onclick=e=>{e.stopPropagation();let id=b.closest('.card').dataset.id;favs=favs.includes(id)?favs.filter(x=>x!==id):[...favs,id];state();renderFav();toast(favs.includes(id)?"Added to favorites":"Removed from favorites")});$$('.open').forEach(b=>b.onclick=()=>openTool(b.closest('.card').dataset.id));
-$("#search").oninput=e=>{let q=e.target.value.toLowerCase().trim(),n=0;$$('.card').forEach(c=>{let ok=c.dataset.name.toLowerCase().includes(q);c.style.display=ok?'':'none';if(ok)n++});$("#empty").style.display=n?'none':'block'};$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');let cat=t.dataset.cat,n=0;$$('.card').forEach(c=>{let ok=cat==='all'||c.dataset.cat===cat;c.style.display=ok?'':'none';if(ok)n++});$("#empty").style.display=n?'none':'block'});
-$("#themeBtn").onclick=()=>{document.body.classList.toggle('dark');localStorage.st_theme=document.body.classList.contains('dark')?'dark':'light';$("#themeBtn").textContent=document.body.classList.contains('dark')?'☀':'☾'};if(localStorage.st_theme==='dark'){document.body.classList.add('dark');$("#themeBtn").textContent='☀'}
-function remember(id){recent=[id,...recent.filter(x=>x!==id)].slice(0,7);state();renderRecent()}function result(){return '<div id="result" class="result"></div>'}function form(l,id,type='number',ph=''){return `<div class="field"><label>${l}</label><input id="${id}" type="${type}" placeholder="${ph}"></div>`}function num(id){return parseFloat($('#'+id).value)}function show(x){$('#result').textContent=x}
-function openTool(id){remember(id);$('#workTitle').textContent=names[id];let body='';const f=(title,desc,html)=>`<div class="tool-form"><h3>${title}</h3><p class="muted">${desc}</p>${html}</div>`;switch(id){case'percentage':body=f(names[id],'Find X% of Y.',form('Percentage','p1','number','20')+form('Number','p2','number','500')+'<button class="btn primary" onclick="percentage()">Calculate</button>'+result());break;case'grade':body=f(names[id],'Calculate your score percentage.',form('Marks obtained','g1','number','425')+form('Total marks','g2','number','500')+'<button class="btn primary" onclick="grade()">Calculate</button>'+result());break;case'gpa':body=f(names[id],'Enter grade points and credits for up to 5 subjects.','<div class="form-grid">'+[1,2,3,4,5].map(i=>form('Subject '+i+' grade point','gp'+i,'number','8.5')+form('Subject '+i+' credits','cr'+i,'number','1')).join('')+'</div><button class="btn primary" onclick="gpa()">Calculate GPA</button>'+result());break;case'average':body=f(names[id],'Enter numbers separated by commas, spaces or new lines.','<div class="field"><textarea id="avg" rows="7" placeholder="75, 82, 91, 88"></textarea></div><button class="btn primary" onclick="average()">Calculate average</button>'+result());break;case'discount':body=f(names[id],'Calculate savings and final price.',form('Original price','d1','number','1000')+form('Discount %','d2','number','20')+'<button class="btn primary" onclick="discount()">Calculate</button>'+result());break;case'fraction':body=f(names[id],'Work with two fractions.','<div class="form-grid">'+form('First numerator','fn1','number','1')+form('First denominator','fd1','number','2')+form('Second numerator','fn2','number','1')+form('Second denominator','fd2','number','4')+'</div><div class="field"><label>Operation</label><select id="op"><option value="+">Add (+)</option><option value="-">Subtract (−)</option><option value="*">Multiply (×)</option><option value="/">Divide (÷)</option></select></div><button class="btn primary" onclick="fraction()">Calculate</button>'+result());break;case'calculator':body=f(names[id],'Use numbers, parentheses and + − × ÷.',form('Expression','expr','text','25 + 15 * 2')+'<button class="btn primary" onclick="calc()">Calculate</button>'+result());break;case'age':body=f(names[id],'Find age from a date of birth.',form('Date of birth','dob','date')+'<button class="btn primary" onclick="age()">Calculate age</button>'+result());break;case'days':body=f(names[id],'Find the number of days between dates.',form('Start date','ds','date')+form('End date','de','date')+'<button class="btn primary" onclick="days()">Calculate</button>'+result());break;case'unit':body=f(names[id],'Convert distance, weight and temperature.',''+form('Value','uv','number','10')+'<div class="field"><label>Conversion</label><select id="ut"><option value="km-mi">Kilometers → Miles</option><option value="mi-km">Miles → Kilometers</option><option value="kg-lb">Kilograms → Pounds</option><option value="lb-kg">Pounds → Kilograms</option><option value="c-f">Celsius → Fahrenheit</option><option value="f-c">Fahrenheit → Celsius</option><option value="m-ft">Meters → Feet</option><option value="ft-m">Feet → Meters</option></select></div><button class="btn primary" onclick="unit()">Convert</button>'+result());break;case'word':body=f(names[id],'Count words, characters and lines.','<div class="field"><textarea id="wt" rows="9" placeholder="Type or paste your text..."></textarea></div>'+result());break;case'timer':body=f(names[id],'Choose a preset, then start a focused session.','<div id="timerDisplay" class="timer">25:00</div><div class="presets"><button onclick="setTimer(5)">5 min</button><button onclick="setTimer(15)">15 min</button><button onclick="setTimer(25)">25 min</button><button onclick="setTimer(45)">45 min</button></div><div style="text-align:center;margin-top:18px"><button id="timerBtn" class="btn primary" onclick="toggleTimer()">Start</button> <button class="btn secondary" onclick="resetTimer()">Reset</button></div>');break;case'notes':body=f(names[id],'Notes are stored locally in this browser.','<div class="field"><textarea id="notes" rows="12" placeholder="Write your study notes..."></textarea></div><button class="btn primary" onclick="saveNotes()">Save notes</button> <button class="btn secondary" onclick="clearNotes()">Clear</button>');break;case'random':body=f(names[id],'Pick one small task when you need a starting point.','<div id="task" class="result">Press the button to choose a task.</div><button class="btn primary" onclick="pickTask()">Pick a task</button>');break;case'qr':body=f(names[id],'Create a QR code from text or a website address.','<div class="field"><input id="qrText" placeholder="https://example.com"></div><button class="btn primary" onclick="makeQR()">Generate QR</button><div class="qr"><canvas id="qrCanvas"></canvas></div>');break;case'change':body=f(names[id],'Find percentage increase or decrease.',form('Old value','c1','number','100')+form('New value','c2','number','125')+'<button class="btn primary" onclick="change()">Calculate</button>'+result());break;case'timecalc':body=f(names[id],'If end time is earlier, it is treated as the next day.','<div class="form-grid">'+form('Start time','ts','time')+form('End time','te','time')+'</div><button class="btn primary" onclick="timeDiff()">Calculate duration</button>'+result());break;case'countdown':body=f(names[id],'Choose a future date.',form('Exam date','exam','date')+'<button class="btn primary" onclick="countdown()">Calculate countdown</button>'+result());break}$('#workspace').innerHTML=body;if(id==='word')$('#wt').oninput=word;if(id==='notes')$('#notes').value=localStorage.st_notes||'';$('#workspace').scrollIntoView({behavior:'smooth',block:'start'})}
-window.percentage=()=>{let a=num('p1'),b=num('p2');show(Number.isFinite(a)&&Number.isFinite(b)?`${a}% of ${b} = ${fmt(a*b/100)}`:'Enter both values.')};window.grade=()=>{let a=num('g1'),b=num('g2');show(Number.isFinite(a)&&b>0?`Percentage: ${fmt(a/b*100)}%`:'Enter valid marks.')};window.gpa=()=>{let p=0,c=0;for(let i=1;i<=5;i++){let g=num('gp'+i),x=num('cr'+i);if(Number.isFinite(g)&&Number.isFinite(x)&&x>0){p+=g*x;c+=x}}show(c?`Weighted GPA: ${fmt(p/c)}\nCredits counted: ${fmt(c)}`:'Enter at least one grade point and credit.')};window.average=()=>{let a=$('#avg').value.split(/[\s,]+/).map(Number).filter(Number.isFinite);show(a.length?`Average: ${fmt(a.reduce((x,y)=>x+y,0)/a.length)}\nNumbers counted: ${a.length}`:'Enter some numbers.')};window.discount=()=>{let p=num('d1'),d=num('d2');show(Number.isFinite(p)&&Number.isFinite(d)?`You save: ${fmt(p*d/100)}\nFinal price: ${fmt(p*(1-d/100))}`:'Enter valid values.')};function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1}window.fraction=()=>{let a=+$('#fn1').value,b=+$('#fd1').value,c=+$('#fn2').value,d=+$('#fd2').value,o=$('#op').value;if(!b||!d){show('Denominators cannot be zero.');return}let n,den;if(o==='+'){n=a*d+c*b;den=b*d}else if(o==='-'){n=a*d-c*b;den=b*d}else if(o==='*'){n=a*c;den=b*d}else{if(!c){show('Cannot divide by zero.');return}n=a*d;den=b*c}let g=gcd(n,den);show(`Result: ${n/g}/${den/g}\nDecimal: ${fmt(n/den)}`)};window.calc=()=>{let s=$('#expr').value.replaceAll('×','*').replaceAll('÷','/').replaceAll('−','-').trim();if(!/^[0-9+\-*/().\s]+$/.test(s)){show('Use only numbers, parentheses and + − × ÷.');return}try{show('Result: '+fmt(Function('"use strict";return ('+s+')')()))}catch{show('Please check the expression.')}};window.age=()=>{let d=new Date($('#dob').value+'T00:00:00'),n=new Date();if(isNaN(d)){show('Choose a date.');return}let y=n.getFullYear()-d.getFullYear(),m=n.getMonth()-d.getMonth(),day=n.getDate()-d.getDate();if(day<0){m--;day+=new Date(n.getFullYear(),n.getMonth(),0).getDate()}if(m<0){y--;m+=12}show(`Age: ${y} years, ${m} months, ${day} days`)};window.days=()=>{let a=new Date($('#ds').value+'T00:00:00'),b=new Date($('#de').value+'T00:00:00');if(isNaN(a)||isNaN(b)){show('Choose both dates.');return}show(`Difference: ${Math.abs(Math.round((b-a)/86400000))} days`)};window.unit=()=>{let v=num('uv'),t=$('#ut').value,m={'km-mi':v=>v*.621371,'mi-km':v=>v*1.609344,'kg-lb':v=>v*2.2046226,'lb-kg':v=>v*.45359237,'c-f':v=>v*9/5+32,'f-c':v=>(v-32)*5/9,'m-ft':v=>v*3.28084,'ft-m':v=>v*.3048};show(Number.isFinite(v)?`Result: ${fmt(m[t](v))}`:'Enter a value.')};window.word=()=>{let t=$('#wt').value,w=t.trim()?t.trim().split(/\s+/).length:0;$('#result').textContent=`Words: ${w}\nCharacters: ${t.length}\nCharacters without spaces: ${t.replace(/\s/g,'').length}\nLines: ${t?t.split(/\r?\n/).length:0}`};
-let secs=1500,running=false,interval;function draw(){let m=String(Math.floor(secs/60)).padStart(2,'0'),s=String(secs%60).padStart(2,'0');if($('#timerDisplay'))$('#timerDisplay').textContent=m+':'+s;if($('#timerBtn'))$('#timerBtn').textContent=running?'Pause':'Start'}window.setTimer=m=>{clearInterval(interval);running=false;secs=m*60;draw()};window.toggleTimer=()=>{if(running){clearInterval(interval);running=false;draw();return}running=true;draw();interval=setInterval(()=>{secs--;draw();if(secs<=0){clearInterval(interval);running=false;toast('Focus session complete.');draw()}},1000)};window.resetTimer=()=>{clearInterval(interval);running=false;secs=1500;draw()};window.saveNotes=()=>{localStorage.st_notes=$('#notes').value;toast('Notes saved in this browser.')};window.clearNotes=()=>{localStorage.removeItem('st_notes');$('#notes').value='';toast('Notes cleared.')};let tasks=['Review one difficult topic','Solve five practice questions','Read and summarize one page','Revise today’s class notes','Make five flashcards','Explain a concept without notes','Organize your study materials','Take a short break, then start one focused task'];window.pickTask=()=>$('#task').textContent=tasks[Math.floor(Math.random()*tasks.length)];window.makeQR=()=>{let t=$('#qrText').value.trim();if(!t){toast('Enter text or a URL first.');return}if(typeof QRious==='undefined'){toast('QR library is loading.');return}new QRious({element:$('#qrCanvas'),value:t,size:220,level:'H'})};window.change=()=>{let a=num('c1'),b=num('c2');if(!Number.isFinite(a)||!Number.isFinite(b)||a===0){show('Enter valid values.');return}let x=(b-a)/Math.abs(a)*100;show(`${x>=0?'Increase':'Decrease'}: ${fmt(Math.abs(x))}%`)};window.timeDiff=()=>{let a=$('#ts').value,b=$('#te').value;if(!a||!b){show('Choose both times.');return}let [h1,m1]=a.split(':').map(Number),[h2,m2]=b.split(':').map(Number),x=h2*60+m2-h1*60-m1;if(x<0)x+=1440;show(`Duration: ${Math.floor(x/60)} hours ${x%60} minutes`)};window.countdown=()=>{let d=new Date($('#exam').value+'T23:59:59'),n=new Date();if(isNaN(d)){show('Choose an exam date.');return}let x=d-n;if(x<0){show('That date has already passed.');return}show(`${Math.floor(x/86400000)} days, ${Math.floor(x%86400000/3600000)} hours remaining`)};
+/* =========================================================
+   STUDENTTOOLS — MAIN SCRIPT
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* =========================
+       ELEMENTS
+       ========================= */
+
+    const root = document.documentElement;
+
+    const themeBtn = document.getElementById("themeBtn");
+    const toolSearch = document.getElementById("toolSearch");
+    const toolGrid = document.getElementById("toolGrid");
+    const noTools = document.getElementById("noTools");
+    const recentTools = document.getElementById("recentTools");
+    const workspace = document.getElementById("workspace");
+    const workspaceHint = document.getElementById("workspaceHint");
+    const workspaceBox = document.getElementById("workspaceBox");
+    const toast = document.getElementById("toast");
+
+    let timerInterval = null;
+    let timerSeconds = 25 * 60;
+
+    /* =========================
+       STORAGE
+       ========================= */
+
+    let favorites = JSON.parse(localStorage.getItem("studenttools_favorites") || "[]");
+    let recent = JSON.parse(localStorage.getItem("studenttools_recent") || "[]");
+
+    /* =========================
+       THEME
+       ========================= */
+
+    const savedTheme = localStorage.getItem("studenttools_theme");
+
+    if (savedTheme === "dark") {
+        root.setAttribute("data-theme", "dark");
+        updateThemeIcon();
+    }
+
+    if (themeBtn) {
+        themeBtn.addEventListener("click", () => {
+            const dark = root.getAttribute("data-theme") === "dark";
+
+            if (dark) {
+                root.removeAttribute("data-theme");
+                localStorage.setItem("studenttools_theme", "light");
+            } else {
+                root.setAttribute("data-theme", "dark");
+                localStorage.setItem("studenttools_theme", "dark");
+            }
+
+            updateThemeIcon();
+        });
+    }
+
+    function updateThemeIcon() {
+        if (!themeBtn) return;
+
+        const dark = root.getAttribute("data-theme") === "dark";
+
+        themeBtn.innerHTML = dark ? "☀️" : "🌙";
+        themeBtn.setAttribute(
+            "aria-label",
+            dark ? "Switch to light mode" : "Switch to dark mode"
+        );
+    }
+
+    /* =========================
+       TOAST
+       ========================= */
+
+    function showToast(message) {
+        if (!toast) return;
+
+        toast.textContent = message;
+        toast.classList.add("show");
+
+        clearTimeout(showToast.timeout);
+
+        showToast.timeout = setTimeout(() => {
+            toast.classList.remove("show");
+        }, 2200);
+    }
+
+    /* =========================
+       SEARCH
+       ========================= */
+
+    if (toolSearch) {
+        toolSearch.addEventListener("input", () => {
+            filterTools();
+        });
+    }
+
+    function filterTools() {
+        const query = (toolSearch?.value || "").toLowerCase().trim();
+        const activeCategory =
+            document.querySelector(".category-tab.active")?.dataset.category || "all";
+
+        let visible = 0;
+
+        document.querySelectorAll(".tool-card").forEach(card => {
+
+            const name = (card.dataset.name || "").toLowerCase();
+            const category = card.dataset.category || "";
+
+            const matchesSearch =
+                !query ||
+                name.includes(query) ||
+                card.textContent.toLowerCase().includes(query);
+
+            const matchesCategory =
+                activeCategory === "all" ||
+                category === activeCategory;
+
+            if (matchesSearch && matchesCategory) {
+                card.style.display = "";
+                visible++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        if (noTools) {
+            noTools.style.display = visible === 0 ? "block" : "none";
+        }
+    }
+
+    /* =========================
+       CATEGORY TABS
+       ========================= */
+
+    document.querySelectorAll(".category-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+
+            document.querySelectorAll(".category-tab").forEach(t => {
+                t.classList.remove("active");
+            });
+
+            tab.classList.add("active");
+
+            filterTools();
+        });
+    });
+
+    /* =========================
+       FAVORITES
+       ========================= */
+
+    document.querySelectorAll(".favorite-button").forEach(button => {
+
+        const card = button.closest(".tool-card");
+        if (!card) return;
+
+        const tool = card.dataset.tool;
+
+        if (favorites.includes(tool)) {
+            button.classList.add("active");
+            button.textContent = "★";
+        }
+
+        button.addEventListener("click", event => {
+            event.stopPropagation();
+
+            if (favorites.includes(tool)) {
+                favorites = favorites.filter(item => item !== tool);
+                button.classList.remove("active");
+                button.textContent = "☆";
+                showToast("Removed from favorites");
+            } else {
+                favorites.push(tool);
+                button.classList.add("active");
+                button.textContent = "★";
+                showToast("Added to favorites");
+            }
+
+            localStorage.setItem(
+                "studenttools_favorites",
+                JSON.stringify(favorites)
+            );
+        });
+    });
+
+    /* =========================
+       OPEN TOOL BUTTONS
+       ========================= */
+
+    document.querySelectorAll(".open-tool").forEach(button => {
+
+        button.addEventListener("click", () => {
+            const tool = button.dataset.tool;
+            openTool(tool);
+        });
+    });
+
+    /* =========================
+       RECENT TOOLS
+       ========================= */
+
+    function saveRecent(tool) {
+
+        recent = recent.filter(item => item !== tool);
+        recent.unshift(tool);
+
+        recent = recent.slice(0, 6);
+
+        localStorage.setItem(
+            "studenttools_recent",
+            JSON.stringify(recent)
+        );
+
+        renderRecent();
+    }
+
+    function renderRecent() {
+
+        if (!recentTools) return;
+
+        recentTools.innerHTML = "";
+
+        if (recent.length === 0) {
+            recentTools.innerHTML =
+                `<span class="recent-empty">Your recently used tools will appear here.</span>`;
+            return;
+        }
+
+        recent.forEach(tool => {
+
+            const card = document.querySelector(
+                `.tool-card[data-tool="${tool}"]`
+            );
+
+            if (!card) return;
+
+            const name = card.dataset.name || tool;
+
+            const chip = document.createElement("button");
+            chip.className = "recent-chip";
+            chip.textContent = name;
+
+            chip.addEventListener("click", () => {
+                openTool(tool);
+            });
+
+            recentTools.appendChild(chip);
+        });
+    }
+
+    renderRecent();
+
+    /* =========================
+       OPEN TOOL
+       ========================= */
+
+    window.openTool = function(tool) {
+
+        if (!workspace || !workspaceBox) return;
+
+        saveRecent(tool);
+
+        workspace.style.display = "block";
+
+        const title = getToolTitle(tool);
+
+        if (workspaceHint) {
+            workspaceHint.textContent = title;
+        }
+
+        workspaceBox.innerHTML = getToolHTML(tool);
+
+        workspace.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        attachToolEvents(tool);
+    };
+
+    function getToolTitle(tool) {
+
+        const card = document.querySelector(
+            `.tool-card[data-tool="${tool}"]`
+        );
+
+        return card?.dataset.name || "Student Tool";
+    }
+
+    /* =========================
+       TOOL HTML
+       ========================= */
+
+    function getToolHTML(tool) {
+
+        switch (tool) {
+
+            case "percentage":
+                return `
+                    <div class="tool-form">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Percentage (%)</label>
+                                <input id="percentValue" type="number" placeholder="20">
+                            </div>
+
+                            <div class="field">
+                                <label>Number</label>
+                                <input id="percentNumber" type="number" placeholder="500">
+                            </div>
+                        </div>
+
+                        <button class="primary-button" id="percentCalculate">
+                            Calculate
+                        </button>
+
+                        <div class="result-box" id="percentResult">
+                            Enter values to calculate.
+                        </div>
+                    </div>
+                `;
+
+            case "grade":
+                return `
+                    <div class="tool-form">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Marks Obtained</label>
+                                <input id="gradeObtained" type="number">
+                            </div>
+
+                            <div class="field">
+                                <label>Total Marks</label>
+                                <input id="gradeTotal" type="number">
+                            </div>
+                        </div>
+
+                        <button class="primary-button" id="gradeCalculate">
+                            Calculate Grade
+                        </button>
+
+                        <div class="result-box" id="gradeResult">
+                            Enter your marks.
+                        </div>
+                    </div>
+                `;
+
+            case "gpa":
+                return `
+                    <div class="tool-form">
+                        <div class="field">
+                            <label>Enter grades separated by commas</label>
+                            <input id="gpaGrades" placeholder="8, 9, 7, 10">
+                        </div>
+
+                        <button class="primary-button" id="gpaCalculate">
+                            Calculate GPA
+                        </button>
+
+                        <div class="result-box" id="gpaResult">
+                            Enter your grades.
+                        </div>
+                    </div>
+                `;
+
+            case "average":
+                return `
+                    <div class="tool-form">
+                        <div class="field">
+                            <label>Numbers separated by commas</label>
+                            <input id="averageNumbers" placeholder="10, 20, 30, 40">
+                        </div>
+
+                        <button class="primary-button" id="averageCalculate">
+                            Calculate Average
+                        </button>
+
+                        <div class="result-box" id="averageResult">
+                            Enter numbers.
+                        </div>
+                    </div>
+                `;
+
+            case "discount":
+                return `
+                    <div class="tool-form">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Original Price</label>
+                                <input id="discountPrice" type="number">
+                            </div>
+
+                            <div class="field">
+                                <label>Discount (%)</label>
+                                <input id="discountPercent" type="number">
+                            </div>
+                        </div>
+
+                        <button class="primary-button" id="discountCalculate">
+                            Calculate
+                        </button>
+
+                        <div class="result-box" id="discountResult">
+                            Enter price and discount.
+                        </div>
+                    </div>
+                `;
+
+            case "fraction":
+                return `
+                    <div class="tool-form">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Numerator 1</label>
+                                <input id="fracA" type="number">
+                            </div>
+
+                            <div class="field">
+                                <label>Denominator 1</label>
+                                <input id="fracB" type="number">
+                            </div>
+
+                            <div class="field">
+                                <label>Numerator 2</label>
+                                <input id="fracC" type="number">
+                            </div>
+
+                            <div class="field">
+                                <label>Denominator 2</label>
+                                <input id="fracD" type="number">
+                            </div>
+                        </div>
+
+                        <button class="primary-button" id="fractionCalculate">
+                            Add Fractions
+                        </button>
+
+                        <div class="result-box" id="fractionResult">
+                            Enter both fractions.
+                        </div>
+                    </div>
+                `;
+
+            case "calculator":
+                return `
+                    <div class="tool-form">
+                        <div class="field">
+                            <label>Expression</label>
+                            <input id="calcExpression"
+                                   placeholder="25 × 4 + 10"
+                                   autocomplete="off">
+                        </div>
+
+                        <button class="primary-button" id="calcCalculate">
+                            Calculate
+                        </button>
+
+                        <div class="result-box" id="calcResult">
+                            Enter a mathematical expression.
+                        </div>
+                    </div>
+                `;
+
+            case "age":
+                return `
+                    <div class="tool-form">
+                        <div class="field">
+                            <label>Date of Birth</label>
+                            <input id="birthDate" type="date">
+                        </div>
+
+                        <button class="primary-button" id="ageCalculate">
+                            Calculate Age
+                        </button>
+
+                        <div class="result-box" id="ageResult">
+                            Enter your date of birth.
+                        </div>
+                    </div>
+                `;
+
+            case "days":
+                return `
+                    <div class="tool-form">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Start Date</label>
+                                <input id="daysStart" type="date">
+                            </div>
+
+                            <div class="field">
+                                <label>End Date</label>
+                                <input id="daysEnd" type="date">
+                            </div>
+                        </div>
+
+                        <button class="primary-button" id="daysCalculate">
+                            Calculate Difference
+                        </button>
+
+                        <div class="result-box" id="daysResult">
+                            Select two dates.
+                        </div>
+                    </div>
+                `;
+
+            case "unit":
+                return `
+                    <div class="tool-form">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Value</label>
+                                <input id="unitValue" type="number">
+                            </div>
+
+                            <div class="field">
+                                <label>From</label>
+                                <select id="unitFrom">
+                                    <option value="m">Meters</option>
+                                    <option value="km">Kilometers</option>
+                                    <option value="cm">Centimeters</option>
+                                    <option value="ft">Feet</option>
+                                    <option value="in">Inches</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>To</label>
+                                <select id="unitTo">
+                                    <option value="m">Meters</option>
+                                    <option value="km">Kilometers</option>
+                                    <option value="cm">Centimeters</option>
+                                    <option value="ft">Feet</option>
+                                    <option value="in">Inches</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button class="primary-button" id="unitCalculate">
+                            Convert
+                        </button>
+
+                        <div class="result-box" id="unitResult">
+                            Enter a value.
+                        </div>
+                    </div>
+                `;
+
+            case "word":
+                return `
+                    <div class="tool-form">
+                        <div class="field">
+                            <label>Paste or type your text</label>
+                            <textarea id="wordText"
+                                      rows="8"
+                                      placeholder="Start typing..."></textarea>
+                        </div>
+
+                        <div class="result-box" id="wordResult">
+                            Words: 0 · Characters: 0 · Sentences: 0
+                        </div>
+                    </div>
+                `;
+
+            case "timer":
+                return `
+                    <div class="tool-form">
+
+                        <div class="timer-display" id="timerDisplay">
+                            25:00
+                        </div>
+
+                        <div class="timer-presets">
+                            <button data-minutes="5">5 min</button>
+                            <button data-minutes="15">15 min</button>
+                            <button data-minutes="25">25 min</button>
+                            <button data-minutes="45">45 min</button>
+                        </div>
+
+                        <div class="hero-buttons">
+                            <button class="primary-button" id="timerStart">
+                                Start
+                            </button>
+
+                            <button class="secondary-button" id="timerReset">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            case "notes":
+                return `
+                    <div class="tool-form">
+                        <div class="field">
+                            <label>Study Notes</label>
+
+                            <textarea
+                                id="notesArea"
+                                class="notes-area"
+                                rows="12"
+                                placeholder="Write your notes here..."
+                            ></textarea>
+                        </div>
+
+                        <div class="hero-buttons">
+                            <button class="primary-button" id="saveNotes">
+                                Save Notes
+                            </button>
+
+                            <button class="secondary-button" id="clearNotes">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            case "random":
+                return `
+                    <div class="tool-form">
+
+                        <div class="result-box" id="randomResult">
+                            Click the button to get a study task.
+                        </div>
+
+                        <button class="primary-button" id="randomTask">
+                            Pick a Task
+                        </button>
+
+                    </div>
+                `;
+
+            case "qr":
+                return `
+                    <div class="tool-form">
+
+                        <div class="field">
+                            <label>Text or URL</label>
+                            <input id="qrText"
+                                   placeholder="https://example.com">
+                        </div>
+
+                        <button class="primary-button" id="qrGenerate">
+                            Generate QR
+                        </button>
+
+                        <div class="qr-wrap" id="qrResult"></div>
+
+                    </div>
+                `;
+
+            case "change":
+                return `
+                    <div class="tool-form">
+
+                        <div class="form-grid">
+
+                            <div class="field">
+                                <label>Original Value</label>
+                                <input id="changeOld" type="number">
+                            </div>
+
+                            <div class="field">
+                                <label>New Value</label>
+                                <input id="changeNew" type="number">
+                            </div>
+
+                        </div>
+
+                        <button class="primary-button" id="changeCalculate">
+                            Calculate Change
+                        </button>
+
+                        <div class="result-box" id="changeResult">
+                            Enter both values.
+                        </div>
+
+                    </div>
+                `;
+
+            case "timecalc":
+                return `
+                    <div class="tool-form">
+
+                        <div class="form-grid">
+
+                            <div class="field">
+                                <label>Start Time</label>
+                                <input id="timeStart" type="time">
+                            </div>
+
+                            <div class="field">
+                                <label>End Time</label>
+                                <input id="timeEnd" type="time">
+                            </div>
+
+                        </div>
+
+                        <button class="primary-button" id="timeCalculate">
+                            Calculate Difference
+                        </button>
+
+                        <div class="result-box" id="timeResult">
+                            Select two times.
+                        </div>
+
+                    </div>
+                `;
+
+            case "countdown":
+                return `
+                    <div class="tool-form">
+
+                        <div class="field">
+                            <label>Exam Date</label>
+                            <input id="examDate" type="datetime-local">
+                        </div>
+
+                        <button class="primary-button" id="countdownStart">
+                            Start Countdown
+                        </button>
+
+                        <div class="result-box" id="countdownResult">
+                            Select your exam date.
+                        </div>
+
+                    </div>
+                `;
+
+            default:
+                return `
+                    <div class="result-box">
+                        This tool is not available yet.
+                    </div>
+                `;
+        }
+    }
+
+    /* =========================
+       TOOL EVENTS
+       ========================= */
+
+    function attachToolEvents(tool) {
+
+        switch (tool) {
+
+            /* PERCENTAGE */
+
+            case "percentage":
+                document.getElementById("percentCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const p = Number(
+                            document.getElementById("percentValue").value
+                        );
+
+                        const n = Number(
+                            document.getElementById("percentNumber").value
+                        );
+
+                        if (!isFinite(p) || !isFinite(n)) {
+                            showToast("Enter valid numbers");
+                            return;
+                        }
+
+                        document.getElementById("percentResult").innerHTML =
+                            `<strong>${p}% of ${n} = ${formatNumber((p / 100) * n)}</strong>`;
+                    });
+                break;
+
+
+            /* GRADE */
+
+            case "grade":
+                document.getElementById("gradeCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const obtained = Number(
+                            document.getElementById("gradeObtained").value
+                        );
+
+                        const total = Number(
+                            document.getElementById("gradeTotal").value
+                        );
+
+                        if (!isFinite(obtained) || !isFinite(total) || total <= 0) {
+                            showToast("Enter valid marks");
+                            return;
+                        }
+
+                        const percentage = (obtained / total) * 100;
+
+                        let grade;
+
+                        if (percentage >= 90) grade = "A+";
+                        else if (percentage >= 80) grade = "A";
+                        else if (percentage >= 70) grade = "B";
+                        else if (percentage >= 60) grade = "C";
+                        else if (percentage >= 50) grade = "D";
+                        else grade = "F";
+
+                        document.getElementById("gradeResult").innerHTML =
+                            `<strong>${formatNumber(percentage)}%</strong><br>
+                             Grade: <strong>${grade}</strong>`;
+                    });
+                break;
+
+
+            /* GPA */
+
+            case "gpa":
+                document.getElementById("gpaCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const values = document.getElementById("gpaGrades")
+                            .value
+                            .split(",")
+                            .map(Number)
+                            .filter(n => isFinite(n));
+
+                        if (!values.length) {
+                            showToast("Enter your grades");
+                            return;
+                        }
+
+                        const avg =
+                            values.reduce((a, b) => a + b, 0) / values.length;
+
+                        document.getElementById("gpaResult").innerHTML =
+                            `Average GPA: <strong>${formatNumber(avg, 2)}</strong>`;
+                    });
+                break;
+
+
+            /* AVERAGE */
+
+            case "average":
+                document.getElementById("averageCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const values = document.getElementById("averageNumbers")
+                            .value
+                            .split(",")
+                            .map(Number)
+                            .filter(n => isFinite(n));
+
+                        if (!values.length) {
+                            showToast("Enter numbers");
+                            return;
+                        }
+
+                        const total =
+                            values.reduce((a, b) => a + b, 0);
+
+                        const average = total / values.length;
+
+                        document.getElementById("averageResult").innerHTML =
+                            `Average: <strong>${formatNumber(average)}</strong>`;
+                    });
+                break;
+
+
+            /* DISCOUNT */
+
+            case "discount":
+                document.getElementById("discountCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const price = Number(
+                            document.getElementById("discountPrice").value
+                        );
+
+                        const discount = Number(
+                            document.getElementById("discountPercent").value
+                        );
+
+                        if (!isFinite(price) || !isFinite(discount)) {
+                            showToast("Enter valid values");
+                            return;
+                        }
+
+                        const saved = price * discount / 100;
+                        const finalPrice = price - saved;
+
+                        document.getElementById("discountResult").innerHTML =
+                            `You save: <strong>${formatNumber(saved)}</strong><br>
+                             Final price: <strong>${formatNumber(finalPrice)}</strong>`;
+                    });
+                break;
+
+
+            /* FRACTION */
+
+            case "fraction":
+                document.getElementById("fractionCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const a = Number(document.getElementById("fracA").value);
+                        const b = Number(document.getElementById("fracB").value);
+                        const c = Number(document.getElementById("fracC").value);
+                        const d = Number(document.getElementById("fracD").value);
+
+                        if (
+                            !isFinite(a) ||
+                            !isFinite(b) ||
+                            !isFinite(c) ||
+                            !isFinite(d) ||
+                            b === 0 ||
+                            d === 0
+                        ) {
+                            showToast("Enter valid fractions");
+                            return;
+                        }
+
+                        const numerator = a * d + c * b;
+                        const denominator = b * d;
+
+                        const simplified =
+                            simplifyFraction(numerator, denominator);
+
+                        document.getElementById("fractionResult").innerHTML =
+                            `Result: <strong>${simplified.numerator}/${simplified.denominator}</strong>`;
+                    });
+                break;
+
+
+            /* CALCULATOR */
+
+            case "calculator":
+                document.getElementById("calcCalculate")
+                    ?.addEventListener("click", calculateExpression);
+
+                document.getElementById("calcExpression")
+                    ?.addEventListener("keydown", event => {
+                        if (event.key === "Enter") {
+                            calculateExpression();
+                        }
+                    });
+                break;
+
+
+            /* AGE */
+
+            case "age":
+                document.getElementById("ageCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const value =
+                            document.getElementById("birthDate").value;
+
+                        if (!value) {
+                            showToast("Select your birth date");
+                            return;
+                        }
+
+                        const birth = new Date(value + "T00:00:00");
+                        const today = new Date();
+
+                        if (birth > today) {
+                            showToast("Birth date cannot be in the future");
+                            return;
+                        }
+
+                        let years =
+                            today.getFullYear() - birth.getFullYear();
+
+                        let months =
+                            today.getMonth() - birth.getMonth();
+
+                        let days =
+                            today.getDate() - birth.getDate();
+
+                        if (days < 0) {
+                            months--;
+                            days += new Date(
+                                today.getFullYear(),
+                                today.getMonth(),
+                                0
+                            ).getDate();
+                        }
+
+                        if (months < 0) {
+                            years--;
+                            months += 12;
+                        }
+
+                        document.getElementById("ageResult").innerHTML =
+                            `Age: <strong>${years} years, ${months} months, ${days} days</strong>`;
+                    });
+                break;
+
+
+            /* DAYS */
+
+            case "days":
+                document.getElementById("daysCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const start =
+                            document.getElementById("daysStart").value;
+
+                        const end =
+                            document.getElementById("daysEnd").value;
+
+                        if (!start || !end) {
+                            showToast("Select both dates");
+                            return;
+                        }
+
+                        const first = new Date(start);
+                        const second = new Date(end);
+
+                        const difference =
+                            Math.abs(second - first);
+
+                        const days =
+                            Math.round(difference / 86400000);
+
+                        document.getElementById("daysResult").innerHTML =
+                            `Difference: <strong>${days} day${days === 1 ? "" : "s"}</strong>`;
+                    });
+                break;
+
+
+            /* UNIT */
+
+            case "unit":
+                document.getElementById("unitCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const value =
+                            Number(document.getElementById("unitValue").value);
+
+                        const from =
+                            document.getElementById("unitFrom").value;
+
+                        const to =
+                            document.getElementById("unitTo").value;
+
+                        if (!isFinite(value)) {
+                            showToast("Enter a value");
+                            return;
+                        }
+
+                        const meters = {
+                            m: 1,
+                            km: 1000,
+                            cm: 0.01,
+                            ft: 0.3048,
+                            in: 0.0254
+                        };
+
+                        const result =
+                            value * meters[from] / meters[to];
+
+                        document.getElementById("unitResult").innerHTML =
+                            `Result: <strong>${formatNumber(result, 6)}</strong>`;
+                    });
+                break;
+
+
+            /* WORD COUNTER */
+
+            case "word":
+
+                const wordText = document.getElementById("wordText");
+                const wordResult = document.getElementById("wordResult");
+
+                wordText?.addEventListener("input", () => {
+
+                    const text = wordText.value;
+
+                    const words = text.trim()
+                        ? text.trim().split(/\s+/).length
+                        : 0;
+
+                    const characters = text.length;
+
+                    const sentences = text
+                        .split(/[.!?]+/)
+                        .filter(s => s.trim().length > 0)
+                        .length;
+
+                    wordResult.innerHTML =
+                        `Words: <strong>${words}</strong> ·
+                         Characters: <strong>${characters}</strong> ·
+                         Sentences: <strong>${sentences}</strong>`;
+                });
+
+                break;
+
+
+            /* TIMER */
+
+            case "timer":
+                setupTimer();
+                break;
+
+
+            /* NOTES */
+
+            case "notes":
+                setupNotes();
+                break;
+
+
+            /* RANDOM STUDY TASK */
+
+            case "random":
+
+                document.getElementById("randomTask")
+                    ?.addEventListener("click", () => {
+
+                        const tasks = [
+                            "Review your class notes for 15 minutes.",
+                            "Solve 5 practice questions.",
+                            "Read one textbook section carefully.",
+                            "Revise important formulas.",
+                            "Make a short summary of today's topic.",
+                            "Test yourself without looking at your notes.",
+                            "Explain one concept aloud in your own words.",
+                            "Complete one pending homework question.",
+                            "Revise yesterday's difficult topic.",
+                            "Create 5 flashcards."
+                        ];
+
+                        const task =
+                            tasks[Math.floor(Math.random() * tasks.length)];
+
+                        document.getElementById("randomResult").innerHTML =
+                            `<strong>${task}</strong>`;
+                    });
+
+                break;
+
+
+            /* QR */
+
+            case "qr":
+                setupQR();
+                break;
+
+
+            /* PERCENTAGE CHANGE */
+
+            case "change":
+                document.getElementById("changeCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const oldValue =
+                            Number(document.getElementById("changeOld").value);
+
+                        const newValue =
+                            Number(document.getElementById("changeNew").value);
+
+                        if (!isFinite(oldValue) || !isFinite(newValue) || oldValue === 0) {
+                            showToast("Enter valid values");
+                            return;
+                        }
+
+                        const change =
+                            ((newValue - oldValue) / Math.abs(oldValue)) * 100;
+
+                        const direction =
+                            change > 0
+                                ? "increase"
+                                : change < 0
+                                    ? "decrease"
+                                    : "no change";
+
+                        document.getElementById("changeResult").innerHTML =
+                            `<strong>${formatNumber(Math.abs(change), 2)}%</strong> ${direction}`;
+                    });
+                break;
+
+
+            /* TIME DIFFERENCE */
+
+            case "timecalc":
+                document.getElementById("timeCalculate")
+                    ?.addEventListener("click", () => {
+
+                        const start =
+                            document.getElementById("timeStart").value;
+
+                        const end =
+                            document.getElementById("timeEnd").value;
+
+                        if (!start || !end) {
+                            showToast("Select both times");
+                            return;
+                        }
+
+                        let [sh, sm] = start.split(":").map(Number);
+                        let [eh, em] = end.split(":").map(Number);
+
+                        let startMinutes = sh * 60 + sm;
+                        let endMinutes = eh * 60 + em;
+
+                        if (endMinutes < startMinutes) {
+                            endMinutes += 24 * 60;
+                        }
+
+                        const difference =
+                            endMinutes - startMinutes;
+
+                        const hours =
+                            Math.floor(difference / 60);
+
+                        const minutes =
+                            difference % 60;
+
+                        document.getElementById("timeResult").innerHTML =
+                            `Difference: <strong>${hours}h ${minutes}m</strong>`;
+                    });
+                break;
+
+
+            /* COUNTDOWN */
+
+            case "countdown":
+                setupCountdown();
+                break;
+        }
+    }
+
+    /* =========================
+       CALCULATOR
+       ========================= */
+
+    function calculateExpression() {
+
+        const input =
+            document.getElementById("calcExpression");
+
+        const result =
+            document.getElementById("calcResult");
+
+        if (!input || !result) return;
+
+        let expression = input.value.trim();
+
+        if (!expression) {
+            showToast("Enter an expression");
+            return;
+        }
+
+        expression = expression
+            .replace(/×/g, "*")
+            .replace(/÷/g, "/")
+            .replace(/−/g, "-")
+            .replace(/,/g, "");
+
+        /*
+         * Only allow basic mathematical characters.
+         * This prevents arbitrary JavaScript from being executed.
+         */
+
+        if (!/^[0-9+\-*/().%\s]+$/.test(expression)) {
+            result.textContent = "Only basic mathematical expressions are allowed.";
+            return;
+        }
+
+        try {
+
+            const safeExpression =
+                expression.replace(
+                    /(\d+(?:\.\d+)?)%/g,
+                    "($1/100)"
+                );
+
+            const value = Function(
+                `"use strict"; return (${safeExpression})`
+            )();
+
+            if (!isFinite(value)) {
+                throw new Error();
+            }
+
+            result.innerHTML =
+                `Answer: <strong>${formatNumber(value, 10)}</strong>`;
+
+        } catch {
+            result.textContent =
+                "Invalid expression.";
+        }
+    }
+
+    /* =========================
+       TIMER
+       ========================= */
+
+    function setupTimer() {
+
+        clearInterval(timerInterval);
+
+        timerSeconds = 25 * 60;
+
+        updateTimerDisplay();
+
+        document.querySelectorAll(".timer-presets button")
+            .forEach(button => {
+
+                button.addEventListener("click", () => {
+
+                    const minutes =
+                        Number(button.dataset.minutes);
+
+                    timerSeconds = minutes * 60;
+
+                    clearInterval(timerInterval);
+
+                    updateTimerDisplay();
+
+                    showToast(`${minutes}-minute timer selected`);
+                });
+            });
+
+        document.getElementById("timerStart")
+            ?.addEventListener("click", () => {
+
+                if (timerInterval) {
+
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+
+                    document.getElementById("timerStart").textContent =
+                        "Start";
+
+                    return;
+                }
+
+                document.getElementById("timerStart").textContent =
+                    "Pause";
+
+                timerInterval = setInterval(() => {
+
+                    if (timerSeconds <= 0) {
+
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+
+                        document.getElementById("timerStart").textContent =
+                            "Start";
+
+                        updateTimerDisplay();
+
+                        showToast("Timer finished");
+
+                        return;
+                    }
+
+                    timerSeconds--;
+                    updateTimerDisplay();
+
+                }, 1000);
+            });
+
+        document.getElementById("timerReset")
+            ?.addEventListener("click", () => {
+
+                clearInterval(timerInterval);
+                timerInterval = null;
+
+                timerSeconds = 25 * 60;
+
+                updateTimerDisplay();
+
+                const start =
+                    document.getElementById("timerStart");
+
+                if (start) start.textContent = "Start";
+            });
+    }
+
+    function updateTimerDisplay() {
+
+        const display =
+            document.getElementById("timerDisplay");
+
+        if (!display) return;
+
+        const minutes =
+            Math.floor(timerSeconds / 60);
+
+        const seconds =
+            timerSeconds % 60;
+
+        display.textContent =
+            `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    /* =========================
+       NOTES
+       ========================= */
+
+    function setupNotes() {
+
+        const area =
+            document.getElementById("notesArea");
+
+        if (!area) return;
+
+        area.value =
+            localStorage.getItem("studenttools_notes") || "";
+
+        document.getElementById("saveNotes")
+            ?.addEventListener("click", () => {
+
+                localStorage.setItem(
+                    "studenttools_notes",
+                    area.value
+                );
+
+                showToast("Notes saved");
+            });
+
+        document.getElementById("clearNotes")
+            ?.addEventListener("click", () => {
+
+                area.value = "";
+
+                localStorage.removeItem(
+                    "studenttools_notes"
+                );
+
+                showToast("Notes cleared");
+            });
+    }
+
+    /* =========================
+       QR GENERATOR
+       ========================= */
+
+    function setupQR() {
+
+        document.getElementById("qrGenerate")
+            ?.addEventListener("click", () => {
+
+                const text =
+                    document.getElementById("qrText").value.trim();
+
+                const result =
+                    document.getElementById("qrResult");
+
+                if (!text) {
+                    showToast("Enter text or a URL");
+                    return;
+                }
+
+                if (typeof QRious === "undefined") {
+
+                    result.innerHTML =
+                        `<p>QR generator library could not be loaded.</p>`;
+
+                    return;
+                }
+
+                result.innerHTML = "";
+
+                const canvas =
+                    document.createElement("canvas");
+
+                result.appendChild(canvas);
+
+                new QRious({
+                    element: canvas,
+                    value: text,
+                    size: 220,
+                    level: "H"
+                });
+
+                showToast("QR code generated");
+            });
+    }
+
+    /* =========================
+       COUNTDOWN
+       ========================= */
+
+    let countdownInterval = null;
+
+    function setupCountdown() {
+
+        clearInterval(countdownInterval);
+
+        document.getElementById("countdownStart")
+            ?.addEventListener("click", () => {
+
+                const input =
+                    document.getElementById("examDate");
+
+                const result =
+                    document.getElementById("countdownResult");
+
+                if (!input.value) {
+                    showToast("Select an exam date");
+                    return;
+                }
+
+                const target =
+                    new Date(input.value).getTime();
+
+                if (target <= Date.now()) {
+                    result.textContent =
+                        "The selected date has already passed.";
+                    return;
+                }
+
+                clearInterval(countdownInterval);
+
+                function updateCountdown() {
+
+                    const remaining =
+                        target - Date.now();
+
+                    if (remaining <= 0) {
+
+                        clearInterval(countdownInterval);
+
+                        result.innerHTML =
+                            `<strong>Time's up!</strong>`;
+
+                        return;
+                    }
+
+                    const days =
+                        Math.floor(
+                            remaining / (1000 * 60 * 60 * 24)
+                        );
+
+                    const hours =
+                        Math.floor(
+                            (remaining / (1000 * 60 * 60)) % 24
+                        );
+
+                    const minutes =
+                        Math.floor(
+                            (remaining / (1000 * 60)) % 60
+                        );
+
+                    const seconds =
+                        Math.floor(
+                            (remaining / 1000) % 60
+                        );
+
+                    result.innerHTML =
+                        `<strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong><br>
+                         remaining until your exam`;
+                }
+
+                updateCountdown();
+
+                countdownInterval =
+                    setInterval(updateCountdown, 1000);
+            });
+    }
+
+    /* =========================
+       FRACTION HELPERS
+       ========================= */
+
+    function gcd(a, b) {
+
+        a = Math.abs(a);
+        b = Math.abs(b);
+
+        while (b !== 0) {
+            const temp = b;
+            b = a % b;
+            a = temp;
+        }
+
+        return a || 1;
+    }
+
+    function simplifyFraction(numerator, denominator) {
+
+        if (denominator < 0) {
+            numerator *= -1;
+            denominator *= -1;
+        }
+
+        const divisor =
+            gcd(numerator, denominator);
+
+        return {
+            numerator: numerator / divisor,
+            denominator: denominator / divisor
+        };
+    }
+
+    /* =========================
+       NUMBER FORMAT
+       ========================= */
+
+    function formatNumber(number, decimals = 4) {
+
+        if (!isFinite(number)) return "Invalid";
+
+        return Number(
+            Number(number).toFixed(decimals)
+        ).toLocaleString();
+    }
+
+    /* =========================
+       KEYBOARD SHORTCUT
+       ========================= */
+
+    document.addEventListener("keydown", event => {
+
+        /* Ctrl + K → focus search */
+
+        if (
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === "k"
+        ) {
+
+            event.preventDefault();
+
+            toolSearch?.focus();
+        }
+
+        /* Escape → close workspace */
+
+        if (event.key === "Escape") {
+
+            if (workspace) {
+                workspace.style.display = "none";
+            }
+        }
+    });
+
+    /* =========================
+       INITIAL SEARCH STATE
+       ========================= */
+
+    filterTools();
+
+});
