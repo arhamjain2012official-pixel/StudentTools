@@ -1,15 +1,27 @@
-document.addEventListener("DOMContentLoaded", function () {
+/* =========================================================
+   STUDENTTOOLS - COMPLETE SCRIPT
+   Matches the current index.html
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* =====================================================
+       ELEMENTS
+       ===================================================== */
 
     const root = document.documentElement;
+
+    const themeBtn = document.getElementById("themeBtn");
+    const searchInput = document.getElementById("toolSearch");
+    const toolGrid = document.getElementById("toolGrid");
+    const noTools = document.getElementById("noTools");
+
     const workspace = document.getElementById("workspace");
     const workspaceBox = document.getElementById("workspaceBox");
     const workspaceHint = document.getElementById("workspaceHint");
-    const toolGrid = document.getElementById("toolGrid");
-    const toolSearch = document.getElementById("toolSearch");
-    const noTools = document.getElementById("noTools");
+
     const recentTools = document.getElementById("recentTools");
     const toast = document.getElementById("toast");
-    const themeBtn = document.getElementById("themeBtn");
 
     let favorites = JSON.parse(
         localStorage.getItem("studenttools_favorites") || "[]"
@@ -22,54 +34,62 @@ document.addEventListener("DOMContentLoaded", function () {
     let timerInterval = null;
     let timerSeconds = 25 * 60;
 
-    /* ==============================
+    let countdownInterval = null;
+
+
+    /* =====================================================
        TOAST
-    ============================== */
+       ===================================================== */
 
     function showToast(message) {
+
         if (!toast) return;
 
         toast.textContent = message;
         toast.classList.add("show");
 
-        setTimeout(() => {
+        clearTimeout(toast._timer);
+
+        toast._timer = setTimeout(() => {
             toast.classList.remove("show");
-        }, 2000);
+        }, 2200);
     }
 
 
-    /* ==============================
+    /* =====================================================
        DARK MODE
-    ============================== */
+       ===================================================== */
 
-    if (localStorage.getItem("studenttools_theme") === "dark") {
+    const savedTheme =
+        localStorage.getItem("studenttools_theme");
+
+    if (savedTheme === "dark") {
         root.setAttribute("data-theme", "dark");
-    }
-
-    function updateThemeIcon() {
-        if (!themeBtn) return;
-
-        const dark =
-            root.getAttribute("data-theme") === "dark";
-
-        themeBtn.textContent = dark ? "☀️" : "🌙";
     }
 
     updateThemeIcon();
 
-    themeBtn?.addEventListener("click", function () {
+    themeBtn?.addEventListener("click", () => {
 
         const dark =
             root.getAttribute("data-theme") === "dark";
 
         if (dark) {
+
             root.removeAttribute("data-theme");
+
             localStorage.setItem(
                 "studenttools_theme",
                 "light"
             );
+
         } else {
-            root.setAttribute("data-theme", "dark");
+
+            root.setAttribute(
+                "data-theme",
+                "dark"
+            );
+
             localStorage.setItem(
                 "studenttools_theme",
                 "dark"
@@ -80,11 +100,29 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    /* ==============================
-       TOOL OPENING
-    ============================== */
+    function updateThemeIcon() {
 
-    document.addEventListener("click", function (event) {
+        if (!themeBtn) return;
+
+        const dark =
+            root.getAttribute("data-theme") === "dark";
+
+        themeBtn.textContent =
+            dark ? "☀️" : "🌙";
+    }
+
+
+    /* =====================================================
+       OPEN TOOL
+       ===================================================== */
+
+    /*
+       IMPORTANT:
+       data-tool is on .tool-card in your index.html,
+       NOT on the .open-tool button.
+    */
+
+    document.addEventListener("click", (event) => {
 
         const button =
             event.target.closest(".open-tool");
@@ -93,13 +131,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         event.preventDefault();
 
-        const tool =
-            button.getAttribute("data-tool");
+        const card =
+            button.closest(".tool-card");
 
-        console.log("Opening tool:", tool);
+        if (!card) {
+            console.error("Tool card not found.");
+            return;
+        }
+
+        const tool =
+            card.getAttribute("data-tool");
 
         if (!tool) {
-            console.error("No data-tool found on button.");
+            console.error(
+                "data-tool is missing from this tool card."
+            );
             return;
         }
 
@@ -111,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!workspace || !workspaceBox) {
             console.error(
-                "Workspace elements not found. Check #workspace and #workspaceBox."
+                "Workspace elements are missing."
             );
             return;
         }
@@ -128,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
         workspaceHint.textContent = name;
 
         workspaceBox.innerHTML =
-            createTool(tool);
+            getToolHTML(tool);
 
         workspace.style.display = "block";
 
@@ -143,15 +189,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* ==============================
+    /* =====================================================
        TOOL HTML
-    ============================== */
+       ===================================================== */
 
-    function createTool(tool) {
+    function getToolHTML(tool) {
 
         switch (tool) {
 
+            /* ---------------------------------------------
+               PERCENTAGE
+            --------------------------------------------- */
+
             case "percentage":
+
                 return `
                     <div class="tool-form">
 
@@ -159,24 +210,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             <div class="field">
                                 <label>Percentage (%)</label>
-                                <input id="pValue" type="number"
-                                    placeholder="20">
+                                <input
+                                    id="percentageValue"
+                                    type="number"
+                                    placeholder="20"
+                                >
                             </div>
 
                             <div class="field">
                                 <label>Number</label>
-                                <input id="pNumber" type="number"
-                                    placeholder="500">
+                                <input
+                                    id="percentageNumber"
+                                    type="number"
+                                    placeholder="500"
+                                >
                             </div>
 
                         </div>
 
-                        <button class="primary-button"
-                            id="pCalculate">
+                        <button
+                            class="primary-button"
+                            id="percentageButton"
+                        >
                             Calculate
                         </button>
 
-                        <div class="result-box" id="pResult">
+                        <div
+                            class="result-box"
+                            id="percentageResult"
+                        >
                             Enter values to calculate.
                         </div>
 
@@ -184,7 +246,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               GRADE
+            --------------------------------------------- */
+
             case "grade":
+
                 return `
                     <div class="tool-form">
 
@@ -192,24 +259,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             <div class="field">
                                 <label>Marks Obtained</label>
-                                <input id="gObtained"
-                                    type="number">
+                                <input
+                                    id="gradeObtained"
+                                    type="number"
+                                    placeholder="85"
+                                >
                             </div>
 
                             <div class="field">
                                 <label>Total Marks</label>
-                                <input id="gTotal"
-                                    type="number">
+                                <input
+                                    id="gradeTotal"
+                                    type="number"
+                                    placeholder="100"
+                                >
                             </div>
 
                         </div>
 
-                        <button class="primary-button"
-                            id="gCalculate">
+                        <button
+                            class="primary-button"
+                            id="gradeButton"
+                        >
                             Calculate Grade
                         </button>
 
-                        <div class="result-box" id="gResult">
+                        <div
+                            class="result-box"
+                            id="gradeResult"
+                        >
                             Enter your marks.
                         </div>
 
@@ -217,22 +295,35 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               GPA
+            --------------------------------------------- */
+
             case "gpa":
+
                 return `
                     <div class="tool-form">
 
                         <div class="field">
-                            <label>Grades</label>
-                            <input id="gpaInput"
-                                placeholder="8, 9, 7, 10">
+                            <label>Grades separated by commas</label>
+
+                            <input
+                                id="gpaInput"
+                                placeholder="8, 9, 7, 10"
+                            >
                         </div>
 
-                        <button class="primary-button"
-                            id="gpaCalculate">
+                        <button
+                            class="primary-button"
+                            id="gpaButton"
+                        >
                             Calculate GPA
                         </button>
 
-                        <div class="result-box" id="gpaResult">
+                        <div
+                            class="result-box"
+                            id="gpaResult"
+                        >
                             Enter your grades.
                         </div>
 
@@ -240,22 +331,35 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               AVERAGE
+            --------------------------------------------- */
+
             case "average":
+
                 return `
                     <div class="tool-form">
 
                         <div class="field">
-                            <label>Numbers</label>
-                            <input id="avgInput"
-                                placeholder="10, 20, 30, 40">
+                            <label>Numbers separated by commas</label>
+
+                            <input
+                                id="averageInput"
+                                placeholder="10, 20, 30, 40"
+                            >
                         </div>
 
-                        <button class="primary-button"
-                            id="avgCalculate">
+                        <button
+                            class="primary-button"
+                            id="averageButton"
+                        >
                             Calculate Average
                         </button>
 
-                        <div class="result-box" id="avgResult">
+                        <div
+                            class="result-box"
+                            id="averageResult"
+                        >
                             Enter numbers.
                         </div>
 
@@ -263,7 +367,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               DISCOUNT
+            --------------------------------------------- */
+
             case "discount":
+
                 return `
                     <div class="tool-form">
 
@@ -271,24 +380,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             <div class="field">
                                 <label>Original Price</label>
-                                <input id="dPrice"
-                                    type="number">
+
+                                <input
+                                    id="discountPrice"
+                                    type="number"
+                                    placeholder="1000"
+                                >
                             </div>
 
                             <div class="field">
                                 <label>Discount (%)</label>
-                                <input id="dPercent"
-                                    type="number">
+
+                                <input
+                                    id="discountPercent"
+                                    type="number"
+                                    placeholder="20"
+                                >
                             </div>
 
                         </div>
 
-                        <button class="primary-button"
-                            id="dCalculate">
+                        <button
+                            class="primary-button"
+                            id="discountButton"
+                        >
                             Calculate
                         </button>
 
-                        <div class="result-box" id="dResult">
+                        <div
+                            class="result-box"
+                            id="discountResult"
+                        >
                             Enter price and discount.
                         </div>
 
@@ -296,25 +418,92 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               FRACTION
+            --------------------------------------------- */
+
+            case "fraction":
+
+                return `
+                    <div class="tool-form">
+
+                        <div class="form-grid">
+
+                            <div class="field">
+                                <label>Numerator 1</label>
+                                <input id="fractionA" type="number">
+                            </div>
+
+                            <div class="field">
+                                <label>Denominator 1</label>
+                                <input id="fractionB" type="number">
+                            </div>
+
+                            <div class="field">
+                                <label>Numerator 2</label>
+                                <input id="fractionC" type="number">
+                            </div>
+
+                            <div class="field">
+                                <label>Denominator 2</label>
+                                <input id="fractionD" type="number">
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="primary-button"
+                            id="fractionButton"
+                        >
+                            Add Fractions
+                        </button>
+
+                        <div
+                            class="result-box"
+                            id="fractionResult"
+                        >
+                            Enter both fractions.
+                        </div>
+
+                    </div>
+                `;
+
+
+            /* ---------------------------------------------
+               BASIC CALCULATOR
+            --------------------------------------------- */
+
             case "calculator":
+
                 return `
                     <div class="tool-form">
 
                         <div class="field">
-                            <label>Expression</label>
 
-                            <input id="calculatorInput"
-                                placeholder="25 × 4 + 10">
+                            <label>
+                                Mathematical Expression
+                            </label>
+
+                            <input
+                                id="calculatorInput"
+                                type="text"
+                                placeholder="25 × 4 + 10"
+                                autocomplete="off"
+                            >
 
                         </div>
 
-                        <button class="primary-button"
-                            id="calculatorButton">
+                        <button
+                            class="primary-button"
+                            id="calculatorButton"
+                        >
                             Calculate
                         </button>
 
-                        <div class="result-box"
-                            id="calculatorResult">
+                        <div
+                            class="result-box"
+                            id="calculatorResult"
+                        >
                             Enter an expression.
                         </div>
 
@@ -322,23 +511,37 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               AGE
+            --------------------------------------------- */
+
             case "age":
+
                 return `
                     <div class="tool-form">
 
                         <div class="field">
+
                             <label>Date of Birth</label>
-                            <input id="ageInput"
-                                type="date">
+
+                            <input
+                                id="ageDate"
+                                type="date"
+                            >
+
                         </div>
 
-                        <button class="primary-button"
-                            id="ageButton">
+                        <button
+                            class="primary-button"
+                            id="ageButton"
+                        >
                             Calculate Age
                         </button>
 
-                        <div class="result-box"
-                            id="ageResult">
+                        <div
+                            class="result-box"
+                            id="ageResult"
+                        >
                             Select your birth date.
                         </div>
 
@@ -346,7 +549,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               DAYS
+            --------------------------------------------- */
+
             case "days":
+
                 return `
                     <div class="tool-form">
 
@@ -354,25 +562,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             <div class="field">
                                 <label>Start Date</label>
-                                <input id="dayStart"
-                                    type="date">
+                                <input
+                                    id="daysStart"
+                                    type="date"
+                                >
                             </div>
 
                             <div class="field">
                                 <label>End Date</label>
-                                <input id="dayEnd"
-                                    type="date">
+                                <input
+                                    id="daysEnd"
+                                    type="date"
+                                >
                             </div>
 
                         </div>
 
-                        <button class="primary-button"
-                            id="dayButton">
+                        <button
+                            class="primary-button"
+                            id="daysButton"
+                        >
                             Calculate Difference
                         </button>
 
-                        <div class="result-box"
-                            id="dayResult">
+                        <div
+                            class="result-box"
+                            id="daysResult"
+                        >
                             Select both dates.
                         </div>
 
@@ -380,7 +596,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               UNIT CONVERTER
+            --------------------------------------------- */
+
             case "unit":
+
                 return `
                     <div class="tool-form">
 
@@ -388,12 +609,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             <div class="field">
                                 <label>Value</label>
-                                <input id="unitValue"
-                                    type="number">
+                                <input
+                                    id="unitValue"
+                                    type="number"
+                                    placeholder="100"
+                                >
                             </div>
 
                             <div class="field">
+
                                 <label>From</label>
+
                                 <select id="unitFrom">
                                     <option value="m">Meters</option>
                                     <option value="km">Kilometers</option>
@@ -401,10 +627,13 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <option value="ft">Feet</option>
                                     <option value="in">Inches</option>
                                 </select>
+
                             </div>
 
                             <div class="field">
+
                                 <label>To</label>
+
                                 <select id="unitTo">
                                     <option value="m">Meters</option>
                                     <option value="km">Kilometers</option>
@@ -412,17 +641,22 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <option value="ft">Feet</option>
                                     <option value="in">Inches</option>
                                 </select>
+
                             </div>
 
                         </div>
 
-                        <button class="primary-button"
-                            id="unitButton">
+                        <button
+                            class="primary-button"
+                            id="unitButton"
+                        >
                             Convert
                         </button>
 
-                        <div class="result-box"
-                            id="unitResult">
+                        <div
+                            class="result-box"
+                            id="unitResult"
+                        >
                             Enter a value.
                         </div>
 
@@ -430,7 +664,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               WORD COUNTER
+            --------------------------------------------- */
+
             case "word":
+
                 return `
                     <div class="tool-form">
 
@@ -440,48 +679,74 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             <textarea
                                 id="wordInput"
-                                rows="9"
+                                rows="10"
                                 placeholder="Type or paste your text here..."
                             ></textarea>
 
                         </div>
 
-                        <div class="result-box"
-                            id="wordResult">
-                            Words: 0 · Characters: 0
+                        <div
+                            class="result-box"
+                            id="wordResult"
+                        >
+                            Words: <strong>0</strong>
+                            · Characters: <strong>0</strong>
+                            · Lines: <strong>0</strong>
                         </div>
 
                     </div>
                 `;
 
 
+            /* ---------------------------------------------
+               FOCUS TIMER
+            --------------------------------------------- */
+
             case "timer":
+
                 return `
                     <div class="tool-form">
 
-                        <div class="timer-display"
-                            id="timerDisplay">
+                        <div
+                            class="timer-display"
+                            id="timerDisplay"
+                        >
                             25:00
                         </div>
 
                         <div class="timer-presets">
 
-                            <button data-time="5">5 min</button>
-                            <button data-time="15">15 min</button>
-                            <button data-time="25">25 min</button>
-                            <button data-time="45">45 min</button>
+                            <button data-minutes="5">
+                                5 min
+                            </button>
+
+                            <button data-minutes="15">
+                                15 min
+                            </button>
+
+                            <button data-minutes="25">
+                                25 min
+                            </button>
+
+                            <button data-minutes="45">
+                                45 min
+                            </button>
 
                         </div>
 
                         <div class="hero-buttons">
 
-                            <button class="primary-button"
-                                id="timerStart">
+                            <button
+                                class="primary-button"
+                                id="timerStart"
+                            >
                                 Start
                             </button>
 
-                            <button class="secondary-button"
-                                id="timerReset">
+                            <button
+                                class="secondary-button"
+                                id="timerReset"
+                            >
                                 Reset
                             </button>
 
@@ -491,7 +756,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               NOTES
+            --------------------------------------------- */
+
             case "notes":
+
                 return `
                     <div class="tool-form">
 
@@ -508,26 +778,48 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         </div>
 
-                        <button class="primary-button"
-                            id="saveNotes">
-                            Save Notes
-                        </button>
+                        <div class="hero-buttons">
+
+                            <button
+                                class="primary-button"
+                                id="saveNotes"
+                            >
+                                Save Notes
+                            </button>
+
+                            <button
+                                class="secondary-button"
+                                id="clearNotes"
+                            >
+                                Clear
+                            </button>
+
+                        </div>
 
                     </div>
                 `;
 
 
+            /* ---------------------------------------------
+               RANDOM STUDY TASK
+            --------------------------------------------- */
+
             case "random":
+
                 return `
                     <div class="tool-form">
 
-                        <div class="result-box"
-                            id="randomResult">
-                            Click below for a study task.
+                        <div
+                            class="result-box"
+                            id="randomResult"
+                        >
+                            Click the button to get a study task.
                         </div>
 
-                        <button class="primary-button"
-                            id="randomButton">
+                        <button
+                            class="primary-button"
+                            id="randomButton"
+                        >
                             Pick a Study Task
                         </button>
 
@@ -535,7 +827,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               QR GENERATOR
+            --------------------------------------------- */
+
             case "qr":
+
                 return `
                     <div class="tool-form">
 
@@ -543,25 +840,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             <label>Text or URL</label>
 
-                            <input id="qrInput"
-                                placeholder="https://example.com">
+                            <input
+                                id="qrInput"
+                                type="text"
+                                placeholder="https://example.com"
+                            >
 
                         </div>
 
-                        <button class="primary-button"
-                            id="qrButton">
+                        <button
+                            class="primary-button"
+                            id="qrButton"
+                        >
                             Generate QR
                         </button>
 
-                        <div class="qr-wrap"
-                            id="qrResult">
-                        </div>
+                        <div
+                            class="qr-wrap"
+                            id="qrResult"
+                        ></div>
 
                     </div>
                 `;
 
 
+            /* ---------------------------------------------
+               PERCENTAGE CHANGE
+            --------------------------------------------- */
+
             case "change":
+
                 return `
                     <div class="tool-form">
 
@@ -569,25 +877,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             <div class="field">
                                 <label>Original Value</label>
-                                <input id="changeOld"
-                                    type="number">
+
+                                <input
+                                    id="changeOld"
+                                    type="number"
+                                >
                             </div>
 
                             <div class="field">
                                 <label>New Value</label>
-                                <input id="changeNew"
-                                    type="number">
+
+                                <input
+                                    id="changeNew"
+                                    type="number"
+                                >
                             </div>
 
                         </div>
 
-                        <button class="primary-button"
-                            id="changeButton">
+                        <button
+                            class="primary-button"
+                            id="changeButton"
+                        >
                             Calculate Change
                         </button>
 
-                        <div class="result-box"
-                            id="changeResult">
+                        <div
+                            class="result-box"
+                            id="changeResult"
+                        >
                             Enter both values.
                         </div>
 
@@ -595,33 +913,52 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               TIME DIFFERENCE
+            --------------------------------------------- */
+
             case "timecalc":
+
                 return `
                     <div class="tool-form">
 
                         <div class="form-grid">
 
                             <div class="field">
+
                                 <label>Start Time</label>
-                                <input id="timeStart"
-                                    type="time">
+
+                                <input
+                                    id="timeStart"
+                                    type="time"
+                                >
+
                             </div>
 
                             <div class="field">
+
                                 <label>End Time</label>
-                                <input id="timeEnd"
-                                    type="time">
+
+                                <input
+                                    id="timeEnd"
+                                    type="time"
+                                >
+
                             </div>
 
                         </div>
 
-                        <button class="primary-button"
-                            id="timeButton">
+                        <button
+                            class="primary-button"
+                            id="timeButton"
+                        >
                             Calculate Difference
                         </button>
 
-                        <div class="result-box"
-                            id="timeResult">
+                        <div
+                            class="result-box"
+                            id="timeResult"
+                        >
                             Select both times.
                         </div>
 
@@ -629,23 +966,37 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
+            /* ---------------------------------------------
+               EXAM COUNTDOWN
+            --------------------------------------------- */
+
             case "countdown":
+
                 return `
                     <div class="tool-form">
 
                         <div class="field">
+
                             <label>Exam Date & Time</label>
-                            <input id="examInput"
-                                type="datetime-local">
+
+                            <input
+                                id="examDate"
+                                type="datetime-local"
+                            >
+
                         </div>
 
-                        <button class="primary-button"
-                            id="examButton">
+                        <button
+                            class="primary-button"
+                            id="countdownButton"
+                        >
                             Start Countdown
                         </button>
 
-                        <div class="result-box"
-                            id="examResult">
+                        <div
+                            class="result-box"
+                            id="countdownResult"
+                        >
                             Select your exam date.
                         </div>
 
@@ -653,108 +1004,98 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
 
-            case "fraction":
-                return `
-                    <div class="tool-form">
-
-                        <div class="form-grid">
-
-                            <div class="field">
-                                <label>Numerator 1</label>
-                                <input id="fA"
-                                    type="number">
-                            </div>
-
-                            <div class="field">
-                                <label>Denominator 1</label>
-                                <input id="fB"
-                                    type="number">
-                            </div>
-
-                            <div class="field">
-                                <label>Numerator 2</label>
-                                <input id="fC"
-                                    type="number">
-                            </div>
-
-                            <div class="field">
-                                <label>Denominator 2</label>
-                                <input id="fD"
-                                    type="number">
-                            </div>
-
-                        </div>
-
-                        <button class="primary-button"
-                            id="fractionButton">
-                            Add Fractions
-                        </button>
-
-                        <div class="result-box"
-                            id="fractionResult">
-                            Enter both fractions.
-                        </div>
-
-                    </div>
-                `;
-
-
             default:
+
                 return `
                     <div class="result-box">
-                        This tool is not available.
+                        This tool is not available yet.
                     </div>
                 `;
         }
     }
 
 
-    /* ==============================
-       TOOL FUNCTIONALITY
-    ============================== */
+    /* =====================================================
+       TOOL EVENTS
+       ===================================================== */
 
     function attachToolEvents(tool) {
 
-        /* Percentage */
+
+        /* ---------------------------------------------
+           PERCENTAGE
+        --------------------------------------------- */
 
         if (tool === "percentage") {
 
-            document.getElementById("pCalculate")
-                ?.addEventListener("click", function () {
+            document
+                .getElementById("percentageButton")
+                ?.addEventListener("click", () => {
 
-                    const p =
-                        Number(document.getElementById("pValue").value);
+                    const percentage =
+                        Number(
+                            document.getElementById(
+                                "percentageValue"
+                            ).value
+                        );
 
-                    const n =
-                        Number(document.getElementById("pNumber").value);
+                    const number =
+                        Number(
+                            document.getElementById(
+                                "percentageNumber"
+                            ).value
+                        );
 
-                    if (!isFinite(p) || !isFinite(n)) {
+                    if (
+                        !Number.isFinite(percentage) ||
+                        !Number.isFinite(number)
+                    ) {
+
                         showToast("Enter valid numbers");
                         return;
                     }
 
-                    document.getElementById("pResult").innerHTML =
-                        `<strong>${format((p / 100) * n)}</strong>`;
+                    const result =
+                        (percentage / 100) * number;
+
+                    document.getElementById(
+                        "percentageResult"
+                    ).innerHTML =
+                        `${percentage}% of ${number} =
+                        <strong>${formatNumber(result)}</strong>`;
                 });
         }
 
 
-        /* Grade */
+        /* ---------------------------------------------
+           GRADE
+        --------------------------------------------- */
 
         if (tool === "grade") {
 
-            document.getElementById("gCalculate")
-                ?.addEventListener("click", function () {
+            document
+                .getElementById("gradeButton")
+                ?.addEventListener("click", () => {
 
                     const obtained =
-                        Number(document.getElementById("gObtained").value);
+                        Number(
+                            document.getElementById(
+                                "gradeObtained"
+                            ).value
+                        );
 
                     const total =
-                        Number(document.getElementById("gTotal").value);
+                        Number(
+                            document.getElementById(
+                                "gradeTotal"
+                            ).value
+                        );
 
-                    if (!isFinite(obtained) ||
-                        !isFinite(total) ||
-                        total <= 0) {
+                    if (
+                        !Number.isFinite(obtained) ||
+                        !Number.isFinite(total) ||
+                        total <= 0
+                    ) {
 
                         showToast("Enter valid marks");
                         return;
@@ -765,92 +1106,146 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     let grade;
 
-                    if (percentage >= 90) grade = "A+";
-                    else if (percentage >= 80) grade = "A";
-                    else if (percentage >= 70) grade = "B";
-                    else if (percentage >= 60) grade = "C";
-                    else if (percentage >= 50) grade = "D";
-                    else grade = "F";
+                    if (percentage >= 90)
+                        grade = "A+";
+                    else if (percentage >= 80)
+                        grade = "A";
+                    else if (percentage >= 70)
+                        grade = "B";
+                    else if (percentage >= 60)
+                        grade = "C";
+                    else if (percentage >= 50)
+                        grade = "D";
+                    else
+                        grade = "F";
 
-                    document.getElementById("gResult").innerHTML =
-                        `${format(percentage)}% — Grade <strong>${grade}</strong>`;
+                    document.getElementById(
+                        "gradeResult"
+                    ).innerHTML =
+                        `Percentage:
+                        <strong>${formatNumber(percentage, 2)}%</strong>
+                        <br>
+                        Grade:
+                        <strong>${grade}</strong>`;
                 });
         }
 
 
-        /* GPA */
+        /* ---------------------------------------------
+           GPA
+        --------------------------------------------- */
 
         if (tool === "gpa") {
 
-            document.getElementById("gpaCalculate")
-                ?.addEventListener("click", function () {
+            document
+                .getElementById("gpaButton")
+                ?.addEventListener("click", () => {
 
                     const values =
-                        document.getElementById("gpaInput")
-                        .value
-                        .split(",")
-                        .map(Number)
-                        .filter(Number.isFinite);
+                        document
+                            .getElementById("gpaInput")
+                            .value
+                            .split(",")
+                            .map(Number)
+                            .filter(Number.isFinite);
 
                     if (!values.length) {
-                        showToast("Enter grades");
+
+                        showToast("Enter your grades");
                         return;
                     }
 
                     const average =
-                        values.reduce((a, b) => a + b, 0)
-                        / values.length;
+                        values.reduce(
+                            (sum, value) =>
+                                sum + value,
+                            0
+                        ) / values.length;
 
-                    document.getElementById("gpaResult").innerHTML =
-                        `GPA: <strong>${format(average, 2)}</strong>`;
+                    document.getElementById(
+                        "gpaResult"
+                    ).innerHTML =
+                        `GPA:
+                        <strong>
+                            ${formatNumber(average, 2)}
+                        </strong>`;
                 });
         }
 
 
-        /* Average */
+        /* ---------------------------------------------
+           AVERAGE
+        --------------------------------------------- */
 
         if (tool === "average") {
 
-            document.getElementById("avgCalculate")
-                ?.addEventListener("click", function () {
+            document
+                .getElementById("averageButton")
+                ?.addEventListener("click", () => {
 
                     const values =
-                        document.getElementById("avgInput")
-                        .value
-                        .split(",")
-                        .map(Number)
-                        .filter(Number.isFinite);
+                        document
+                            .getElementById("averageInput")
+                            .value
+                            .split(",")
+                            .map(Number)
+                            .filter(Number.isFinite);
 
                     if (!values.length) {
+
                         showToast("Enter numbers");
                         return;
                     }
 
-                    const average =
-                        values.reduce((a, b) => a + b, 0)
-                        / values.length;
+                    const total =
+                        values.reduce(
+                            (sum, value) =>
+                                sum + value,
+                            0
+                        );
 
-                    document.getElementById("avgResult").innerHTML =
-                        `Average: <strong>${format(average)}</strong>`;
+                    const average =
+                        total / values.length;
+
+                    document.getElementById(
+                        "averageResult"
+                    ).innerHTML =
+                        `Average:
+                        <strong>
+                            ${formatNumber(average)}
+                        </strong>`;
                 });
         }
 
 
-        /* Discount */
+        /* ---------------------------------------------
+           DISCOUNT
+        --------------------------------------------- */
 
         if (tool === "discount") {
 
-            document.getElementById("dCalculate")
-                ?.addEventListener("click", function () {
+            document
+                .getElementById("discountButton")
+                ?.addEventListener("click", () => {
 
                     const price =
-                        Number(document.getElementById("dPrice").value);
+                        Number(
+                            document.getElementById(
+                                "discountPrice"
+                            ).value
+                        );
 
                     const discount =
-                        Number(document.getElementById("dPercent").value);
+                        Number(
+                            document.getElementById(
+                                "discountPercent"
+                            ).value
+                        );
 
-                    if (!isFinite(price) ||
-                        !isFinite(discount)) {
+                    if (
+                        !Number.isFinite(price) ||
+                        !Number.isFinite(discount)
+                    ) {
 
                         showToast("Enter valid values");
                         return;
@@ -862,563 +1257,64 @@ document.addEventListener("DOMContentLoaded", function () {
                     const finalPrice =
                         price - saved;
 
-                    document.getElementById("dResult").innerHTML =
-                        `You save <strong>${format(saved)}</strong><br>
-                         Final price: <strong>${format(finalPrice)}</strong>`;
-                });
-        }
-
-
-        /* Calculator */
-
-        if (tool === "calculator") {
-
-            document.getElementById("calculatorButton")
-                ?.addEventListener("click", calculate);
-
-            document.getElementById("calculatorInput")
-                ?.addEventListener("keydown", function (e) {
-
-                    if (e.key === "Enter") {
-                        calculate();
-                    }
-                });
-        }
-
-
-        function calculate() {
-
-            const input =
-                document.getElementById("calculatorInput");
-
-            const result =
-                document.getElementById("calculatorResult");
-
-            let expression =
-                input.value
-                .replace(/×/g, "*")
-                .replace(/÷/g, "/")
-                .replace(/−/g, "-");
-
-            if (!expression) {
-                showToast("Enter an expression");
-                return;
-            }
-
-            if (!/^[0-9+\-*/().%\s]+$/.test(expression)) {
-                result.textContent = "Invalid expression.";
-                return;
-            }
-
-            try {
-
-                expression =
-                    expression.replace(
-                        /(\d+(?:\.\d+)?)%/g,
-                        "($1/100)"
-                    );
-
-                const answer =
-                    Function(
-                        `"use strict"; return (${expression})`
-                    )();
-
-                if (!isFinite(answer)) {
-                    throw new Error();
-                }
-
-                result.innerHTML =
-                    `Answer: <strong>${format(answer)}</strong>`;
-
-            } catch {
-                result.textContent = "Invalid expression.";
-            }
-        }
-
-
-        /* Age */
-
-        if (tool === "age") {
-
-            document.getElementById("ageButton")
-                ?.addEventListener("click", function () {
-
-                    const value =
-                        document.getElementById("ageInput").value;
-
-                    if (!value) {
-                        showToast("Select your birth date");
-                        return;
-                    }
-
-                    const birth =
-                        new Date(value + "T00:00:00");
-
-                    const today =
-                        new Date();
-
-                    let years =
-                        today.getFullYear() -
-                        birth.getFullYear();
-
-                    let months =
-                        today.getMonth() -
-                        birth.getMonth();
-
-                    let days =
-                        today.getDate() -
-                        birth.getDate();
-
-                    if (days < 0) {
-                        months--;
-                        days += new Date(
-                            today.getFullYear(),
-                            today.getMonth(),
-                            0
-                        ).getDate();
-                    }
-
-                    if (months < 0) {
-                        years--;
-                        months += 12;
-                    }
-
-                    document.getElementById("ageResult").innerHTML =
-                        `<strong>${years}</strong> years,
-                         <strong>${months}</strong> months,
-                         <strong>${days}</strong> days`;
-                });
-        }
-
-
-        /* Days */
-
-        if (tool === "days") {
-
-            document.getElementById("dayButton")
-                ?.addEventListener("click", function () {
-
-                    const a =
-                        document.getElementById("dayStart").value;
-
-                    const b =
-                        document.getElementById("dayEnd").value;
-
-                    if (!a || !b) {
-                        showToast("Select both dates");
-                        return;
-                    }
-
-                    const difference =
-                        Math.abs(
-                            new Date(b) - new Date(a)
-                        );
-
-                    const days =
-                        Math.round(
-                            difference / 86400000
-                        );
-
-                    document.getElementById("dayResult").innerHTML =
-                        `Difference: <strong>${days} days</strong>`;
-                });
-        }
-
-
-        /* Unit Converter */
-
-        if (tool === "unit") {
-
-            document.getElementById("unitButton")
-                ?.addEventListener("click", function () {
-
-                    const value =
-                        Number(
-                            document.getElementById("unitValue").value
-                        );
-
-                    const from =
-                        document.getElementById("unitFrom").value;
-
-                    const to =
-                        document.getElementById("unitTo").value;
-
-                    const units = {
-                        m: 1,
-                        km: 1000,
-                        cm: 0.01,
-                        ft: 0.3048,
-                        in: 0.0254
-                    };
-
-                    if (!isFinite(value)) {
-                        showToast("Enter a value");
-                        return;
-                    }
-
-                    const answer =
-                        value * units[from] / units[to];
-
-                    document.getElementById("unitResult").innerHTML =
-                        `Result: <strong>${format(answer, 6)}</strong>`;
-                });
-        }
-
-
-        /* Word Counter */
-
-        if (tool === "word") {
-
-            const input =
-                document.getElementById("wordInput");
-
-            input?.addEventListener("input", function () {
-
-                const text = input.value;
-
-                const words =
-                    text.trim()
-                        ? text.trim().split(/\s+/).length
-                        : 0;
-
-                const characters =
-                    text.length;
-
-                document.getElementById("wordResult").innerHTML =
-                    `Words: <strong>${words}</strong> ·
-                     Characters: <strong>${characters}</strong>`;
-            });
-        }
-
-
-        /* Timer */
-
-        if (tool === "timer") {
-
-            clearInterval(timerInterval);
-
-            timerSeconds = 25 * 60;
-
-            updateTimer();
-
-            document.querySelectorAll(
-                ".timer-presets button"
-            ).forEach(button => {
-
-                button.addEventListener("click", function () {
-
-                    timerSeconds =
-                        Number(button.dataset.time) * 60;
-
-                    clearInterval(timerInterval);
-
-                    updateTimer();
-                });
-            });
-
-
-            document.getElementById("timerStart")
-                ?.addEventListener("click", function () {
-
-                    if (timerInterval) {
-
-                        clearInterval(timerInterval);
-                        timerInterval = null;
-
-                        this.textContent = "Start";
-
-                        return;
-                    }
-
-                    this.textContent = "Pause";
-
-                    timerInterval =
-                        setInterval(function () {
-
-                            if (timerSeconds <= 0) {
-
-                                clearInterval(timerInterval);
-                                timerInterval = null;
-
-                                document.getElementById(
-                                    "timerStart"
-                                ).textContent = "Start";
-
-                                showToast("Timer finished");
-
-                                return;
-                            }
-
-                            timerSeconds--;
-
-                            updateTimer();
-
-                        }, 1000);
-                });
-
-
-            document.getElementById("timerReset")
-                ?.addEventListener("click", function () {
-
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-
-                    timerSeconds = 25 * 60;
-
-                    updateTimer();
-
                     document.getElementById(
-                        "timerStart"
-                    ).textContent = "Start";
-                });
-        }
-
-
-        function updateTimer() {
-
-            const display =
-                document.getElementById("timerDisplay");
-
-            if (!display) return;
-
-            const minutes =
-                Math.floor(timerSeconds / 60);
-
-            const seconds =
-                timerSeconds % 60;
-
-            display.textContent =
-                String(minutes).padStart(2, "0") +
-                ":" +
-                String(seconds).padStart(2, "0");
-        }
-
-
-        /* Notes */
-
-        if (tool === "notes") {
-
-            const input =
-                document.getElementById("notesInput");
-
-            input.value =
-                localStorage.getItem(
-                    "studenttools_notes"
-                ) || "";
-
-            document.getElementById("saveNotes")
-                ?.addEventListener("click", function () {
-
-                    localStorage.setItem(
-                        "studenttools_notes",
-                        input.value
-                    );
-
-                    showToast("Notes saved");
-                });
-        }
-
-
-        /* Random Task */
-
-        if (tool === "random") {
-
-            document.getElementById("randomButton")
-                ?.addEventListener("click", function () {
-
-                    const tasks = [
-                        "Revise one difficult topic.",
-                        "Solve 5 practice questions.",
-                        "Read your notes for 15 minutes.",
-                        "Revise important formulas.",
-                        "Make 5 flashcards.",
-                        "Explain a topic in your own words.",
-                        "Complete one pending homework question.",
-                        "Take a short self-test."
-                    ];
-
-                    const task =
-                        tasks[
-                            Math.floor(
-                                Math.random() * tasks.length
-                            )
-                        ];
-
-                    document.getElementById(
-                        "randomResult"
+                        "discountResult"
                     ).innerHTML =
-                        `<strong>${task}</strong>`;
+                        `You save:
+                        <strong>${formatNumber(saved)}</strong>
+                        <br>
+                        Final price:
+                        <strong>${formatNumber(finalPrice)}</strong>`;
                 });
         }
 
 
-        /* QR */
-
-        if (tool === "qr") {
-
-            document.getElementById("qrButton")
-                ?.addEventListener("click", function () {
-
-                    const text =
-                        document.getElementById("qrInput")
-                        .value
-                        .trim();
-
-                    const result =
-                        document.getElementById("qrResult");
-
-                    if (!text) {
-                        showToast("Enter text or URL");
-                        return;
-                    }
-
-                    if (typeof QRious === "undefined") {
-
-                        result.textContent =
-                            "QR library not loaded.";
-
-                        return;
-                    }
-
-                    result.innerHTML = "";
-
-                    const canvas =
-                        document.createElement("canvas");
-
-                    result.appendChild(canvas);
-
-                    new QRious({
-                        element: canvas,
-                        value: text,
-                        size: 220,
-                        level: "H"
-                    });
-                });
-        }
-
-
-        /* Percentage Change */
-
-        if (tool === "change") {
-
-            document.getElementById("changeButton")
-                ?.addEventListener("click", function () {
-
-                    const oldValue =
-                        Number(
-                            document.getElementById("changeOld").value
-                        );
-
-                    const newValue =
-                        Number(
-                            document.getElementById("changeNew").value
-                        );
-
-                    if (!isFinite(oldValue) ||
-                        !isFinite(newValue) ||
-                        oldValue === 0) {
-
-                        showToast("Enter valid values");
-                        return;
-                    }
-
-                    const change =
-                        ((newValue - oldValue) /
-                            Math.abs(oldValue)) * 100;
-
-                    const type =
-                        change > 0
-                            ? "increase"
-                            : change < 0
-                                ? "decrease"
-                                : "no change";
-
-                    document.getElementById(
-                        "changeResult"
-                    ).innerHTML =
-                        `<strong>${format(Math.abs(change), 2)}%</strong>
-                         ${type}`;
-                });
-        }
-
-
-        /* Time Difference */
-
-        if (tool === "timecalc") {
-
-            document.getElementById("timeButton")
-                ?.addEventListener("click", function () {
-
-                    const start =
-                        document.getElementById("timeStart").value;
-
-                    const end =
-                        document.getElementById("timeEnd").value;
-
-                    if (!start || !end) {
-                        showToast("Select both times");
-                        return;
-                    }
-
-                    let [sh, sm] =
-                        start.split(":").map(Number);
-
-                    let [eh, em] =
-                        end.split(":").map(Number);
-
-                    let startMinutes =
-                        sh * 60 + sm;
-
-                    let endMinutes =
-                        eh * 60 + em;
-
-                    if (endMinutes < startMinutes) {
-                        endMinutes += 1440;
-                    }
-
-                    const difference =
-                        endMinutes - startMinutes;
-
-                    const hours =
-                        Math.floor(difference / 60);
-
-                    const minutes =
-                        difference % 60;
-
-                    document.getElementById(
-                        "timeResult"
-                    ).innerHTML =
-                        `Difference:
-                         <strong>${hours}h ${minutes}m</strong>`;
-                });
-        }
-
-
-        /* Fraction */
+        /* ---------------------------------------------
+           FRACTION
+        --------------------------------------------- */
 
         if (tool === "fraction") {
 
-            document.getElementById("fractionButton")
-                ?.addEventListener("click", function () {
+            document
+                .getElementById("fractionButton")
+                ?.addEventListener("click", () => {
 
                     const a =
-                        Number(document.getElementById("fA").value);
+                        Number(
+                            document.getElementById(
+                                "fractionA"
+                            ).value
+                        );
 
                     const b =
-                        Number(document.getElementById("fB").value);
+                        Number(
+                            document.getElementById(
+                                "fractionB"
+                            ).value
+                        );
 
                     const c =
-                        Number(document.getElementById("fC").value);
+                        Number(
+                            document.getElementById(
+                                "fractionC"
+                            ).value
+                        );
 
                     const d =
-                        Number(document.getElementById("fD").value);
+                        Number(
+                            document.getElementById(
+                                "fractionD"
+                            ).value
+                        );
 
-                    if (!isFinite(a) ||
-                        !isFinite(b) ||
-                        !isFinite(c) ||
-                        !isFinite(d) ||
+                    if (
+                        !Number.isFinite(a) ||
+                        !Number.isFinite(b) ||
+                        !Number.isFinite(c) ||
+                        !Number.isFinite(d) ||
                         b === 0 ||
-                        d === 0) {
+                        d === 0
+                    ) {
 
                         showToast("Enter valid fractions");
                         return;
@@ -1433,26 +1329,1212 @@ document.addEventListener("DOMContentLoaded", function () {
                     const divisor =
                         gcd(numerator, denominator);
 
+                    const finalNumerator =
+                        numerator / divisor;
+
+                    const finalDenominator =
+                        denominator / divisor;
+
                     document.getElementById(
                         "fractionResult"
                     ).innerHTML =
                         `Result:
-                         <strong>
-                         ${numerator / divisor}/${denominator / divisor}
-                         </strong>`;
+                        <strong>
+                            ${finalNumerator}/${finalDenominator}
+                        </strong>`;
                 });
+        }
+
+
+        /* ---------------------------------------------
+           CALCULATOR
+        --------------------------------------------- */
+
+        if (tool === "calculator") {
+
+            const button =
+                document.getElementById(
+                    "calculatorButton"
+                );
+
+            const input =
+                document.getElementById(
+                    "calculatorInput"
+                );
+
+            button?.addEventListener(
+                "click",
+                calculateExpression
+            );
+
+            input?.addEventListener(
+                "keydown",
+                event => {
+
+                    if (event.key === "Enter") {
+                        calculateExpression();
+                    }
+                }
+            );
+        }
+
+
+        function calculateExpression() {
+
+            const input =
+                document.getElementById(
+                    "calculatorInput"
+                );
+
+            const result =
+                document.getElementById(
+                    "calculatorResult"
+                );
+
+            let expression =
+                input.value.trim();
+
+            if (!expression) {
+
+                showToast("Enter an expression");
+                return;
+            }
+
+            expression =
+                expression
+                    .replace(/×/g, "*")
+                    .replace(/÷/g, "/")
+                    .replace(/−/g, "-");
+
+            /*
+             * Only basic mathematical characters
+             * are allowed.
+             */
+
+            if (
+                !/^[0-9+\-*/().%\s]+$/.test(
+                    expression
+                )
+            ) {
+
+                result.textContent =
+                    "Invalid expression.";
+
+                return;
+            }
+
+            try {
+
+                expression =
+                    expression.replace(
+                        /(\d+(?:\.\d+)?)%/g,
+                        "($1/100)"
+                    );
+
+                const answer =
+                    Function(
+                        `"use strict";
+                         return (${expression})`
+                    )();
+
+                if (!Number.isFinite(answer)) {
+                    throw new Error();
+                }
+
+                result.innerHTML =
+                    `Answer:
+                    <strong>
+                        ${formatNumber(answer)}
+                    </strong>`;
+
+            } catch {
+
+                result.textContent =
+                    "Invalid expression.";
+            }
+        }
+
+
+        /* ---------------------------------------------
+           AGE
+        --------------------------------------------- */
+
+        if (tool === "age") {
+
+            document
+                .getElementById("ageButton")
+                ?.addEventListener("click", () => {
+
+                    const value =
+                        document.getElementById(
+                            "ageDate"
+                        ).value;
+
+                    if (!value) {
+
+                        showToast(
+                            "Select your birth date"
+                        );
+
+                        return;
+                    }
+
+                    const birth =
+                        new Date(
+                            value + "T00:00:00"
+                        );
+
+                    const today =
+                        new Date();
+
+                    if (birth > today) {
+
+                        showToast(
+                            "Birth date cannot be in the future"
+                        );
+
+                        return;
+                    }
+
+                    let years =
+                        today.getFullYear() -
+                        birth.getFullYear();
+
+                    let months =
+                        today.getMonth() -
+                        birth.getMonth();
+
+                    let days =
+                        today.getDate() -
+                        birth.getDate();
+
+                    if (days < 0) {
+
+                        months--;
+
+                        days +=
+                            new Date(
+                                today.getFullYear(),
+                                today.getMonth(),
+                                0
+                            ).getDate();
+                    }
+
+                    if (months < 0) {
+
+                        years--;
+                        months += 12;
+                    }
+
+                    document.getElementById(
+                        "ageResult"
+                    ).innerHTML =
+                        `Age:
+                        <strong>
+                            ${years} years,
+                            ${months} months,
+                            ${days} days
+                        </strong>`;
+                });
+        }
+
+
+        /* ---------------------------------------------
+           DAYS
+        --------------------------------------------- */
+
+        if (tool === "days") {
+
+            document
+                .getElementById("daysButton")
+                ?.addEventListener("click", () => {
+
+                    const start =
+                        document.getElementById(
+                            "daysStart"
+                        ).value;
+
+                    const end =
+                        document.getElementById(
+                            "daysEnd"
+                        ).value;
+
+                    if (!start || !end) {
+
+                        showToast(
+                            "Select both dates"
+                        );
+
+                        return;
+                    }
+
+                    const difference =
+                        Math.abs(
+                            new Date(end) -
+                            new Date(start)
+                        );
+
+                    const days =
+                        Math.round(
+                            difference /
+                            86400000
+                        );
+
+                    document.getElementById(
+                        "daysResult"
+                    ).innerHTML =
+                        `Difference:
+                        <strong>
+                            ${days} days
+                        </strong>`;
+                });
+        }
+
+
+        /* ---------------------------------------------
+           UNIT
+        --------------------------------------------- */
+
+        if (tool === "unit") {
+
+            document
+                .getElementById("unitButton")
+                ?.addEventListener("click", () => {
+
+                    const value =
+                        Number(
+                            document.getElementById(
+                                "unitValue"
+                            ).value
+                        );
+
+                    const from =
+                        document.getElementById(
+                            "unitFrom"
+                        ).value;
+
+                    const to =
+                        document.getElementById(
+                            "unitTo"
+                        ).value;
+
+                    const units = {
+
+                        m: 1,
+
+                        km: 1000,
+
+                        cm: 0.01,
+
+                        ft: 0.3048,
+
+                        in: 0.0254
+                    };
+
+                    if (!Number.isFinite(value)) {
+
+                        showToast(
+                            "Enter a value"
+                        );
+
+                        return;
+                    }
+
+                    const result =
+                        value *
+                        units[from] /
+                        units[to];
+
+                    document.getElementById(
+                        "unitResult"
+                    ).innerHTML =
+                        `Result:
+                        <strong>
+                            ${formatNumber(result, 6)}
+                        </strong>`;
+                });
+        }
+
+
+        /* ---------------------------------------------
+           WORD COUNTER
+        --------------------------------------------- */
+
+        if (tool === "word") {
+
+            const input =
+                document.getElementById(
+                    "wordInput"
+                );
+
+            input?.addEventListener(
+                "input",
+                () => {
+
+                    const text =
+                        input.value;
+
+                    const words =
+                        text.trim()
+                            ? text
+                                .trim()
+                                .split(/\s+/)
+                                .length
+                            : 0;
+
+                    const characters =
+                        text.length;
+
+                    const lines =
+                        text
+                            ? text.split("\n").length
+                            : 0;
+
+                    document.getElementById(
+                        "wordResult"
+                    ).innerHTML =
+                        `Words:
+                        <strong>${words}</strong>
+                        · Characters:
+                        <strong>${characters}</strong>
+                        · Lines:
+                        <strong>${lines}</strong>`;
+                }
+            );
+        }
+
+
+        /* ---------------------------------------------
+           TIMER
+        --------------------------------------------- */
+
+        if (tool === "timer") {
+
+            clearInterval(timerInterval);
+
+            timerSeconds =
+                25 * 60;
+
+            updateTimerDisplay();
+
+
+            document
+                .querySelectorAll(
+                    ".timer-presets button"
+                )
+                .forEach(button => {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            const minutes =
+                                Number(
+                                    button.dataset.minutes
+                                );
+
+                            timerSeconds =
+                                minutes * 60;
+
+                            clearInterval(
+                                timerInterval
+                            );
+
+                            timerInterval = null;
+
+                            updateTimerDisplay();
+
+                            const startButton =
+                                document.getElementById(
+                                    "timerStart"
+                                );
+
+                            if (startButton) {
+                                startButton.textContent =
+                                    "Start";
+                            }
+                        }
+                    );
+                });
+
+
+            document
+                .getElementById("timerStart")
+                ?.addEventListener(
+                    "click",
+                    function () {
+
+                        if (timerInterval) {
+
+                            clearInterval(
+                                timerInterval
+                            );
+
+                            timerInterval = null;
+
+                            this.textContent =
+                                "Start";
+
+                            return;
+                        }
+
+                        this.textContent =
+                            "Pause";
+
+                        timerInterval =
+                            setInterval(
+                                () => {
+
+                                    if (
+                                        timerSeconds <= 0
+                                    ) {
+
+                                        clearInterval(
+                                            timerInterval
+                                        );
+
+                                        timerInterval =
+                                            null;
+
+                                        this.textContent =
+                                            "Start";
+
+                                        showToast(
+                                            "Timer finished"
+                                        );
+
+                                        return;
+                                    }
+
+                                    timerSeconds--;
+
+                                    updateTimerDisplay();
+
+                                },
+                                1000
+                            );
+                    }
+                );
+
+
+            document
+                .getElementById("timerReset")
+                ?.addEventListener(
+                    "click",
+                    () => {
+
+                        clearInterval(
+                            timerInterval
+                        );
+
+                        timerInterval = null;
+
+                        timerSeconds =
+                            25 * 60;
+
+                        updateTimerDisplay();
+
+                        document.getElementById(
+                            "timerStart"
+                        ).textContent =
+                            "Start";
+                    }
+                );
+        }
+
+
+        function updateTimerDisplay() {
+
+            const display =
+                document.getElementById(
+                    "timerDisplay"
+                );
+
+            if (!display) return;
+
+            const minutes =
+                Math.floor(
+                    timerSeconds / 60
+                );
+
+            const seconds =
+                timerSeconds % 60;
+
+            display.textContent =
+                String(minutes).padStart(2, "0") +
+                ":" +
+                String(seconds).padStart(2, "0");
+        }
+
+
+        /* ---------------------------------------------
+           NOTES
+        --------------------------------------------- */
+
+        if (tool === "notes") {
+
+            const input =
+                document.getElementById(
+                    "notesInput"
+                );
+
+            input.value =
+                localStorage.getItem(
+                    "studenttools_notes"
+                ) || "";
+
+
+            document
+                .getElementById("saveNotes")
+                ?.addEventListener(
+                    "click",
+                    () => {
+
+                        localStorage.setItem(
+                            "studenttools_notes",
+                            input.value
+                        );
+
+                        showToast(
+                            "Notes saved"
+                        );
+                    }
+                );
+
+
+            document
+                .getElementById("clearNotes")
+                ?.addEventListener(
+                    "click",
+                    () => {
+
+                        input.value = "";
+
+                        localStorage.removeItem(
+                            "studenttools_notes"
+                        );
+
+                        showToast(
+                            "Notes cleared"
+                        );
+                    }
+                );
+        }
+
+
+        /* ---------------------------------------------
+           RANDOM STUDY TASK
+        --------------------------------------------- */
+
+        if (tool === "random") {
+
+            document
+                .getElementById("randomButton")
+                ?.addEventListener(
+                    "click",
+                    () => {
+
+                        const tasks = [
+
+                            "Revise one difficult topic.",
+
+                            "Solve 5 practice questions.",
+
+                            "Read your notes for 15 minutes.",
+
+                            "Revise important formulas.",
+
+                            "Make 5 flashcards.",
+
+                            "Explain one concept in your own words.",
+
+                            "Complete one pending homework question.",
+
+                            "Take a short self-test.",
+
+                            "Summarize today's lesson.",
+
+                            "Review yesterday's difficult topic."
+                        ];
+
+                        const task =
+                            tasks[
+                                Math.floor(
+                                    Math.random() *
+                                    tasks.length
+                                )
+                            ];
+
+                        document.getElementById(
+                            "randomResult"
+                        ).innerHTML =
+                            `<strong>${task}</strong>`;
+                    }
+                );
+        }
+
+
+        /* ---------------------------------------------
+           QR GENERATOR
+        --------------------------------------------- */
+
+        if (tool === "qr") {
+
+            document
+                .getElementById("qrButton")
+                ?.addEventListener(
+                    "click",
+                    () => {
+
+                        const text =
+                            document.getElementById(
+                                "qrInput"
+                            ).value.trim();
+
+                        const result =
+                            document.getElementById(
+                                "qrResult"
+                            );
+
+                        if (!text) {
+
+                            showToast(
+                                "Enter text or a URL"
+                            );
+
+                            return;
+                        }
+
+                        if (
+                            typeof QRious ===
+                            "undefined"
+                        ) {
+
+                            result.textContent =
+                                "QR generator could not load.";
+
+                            return;
+                        }
+
+                        result.innerHTML = "";
+
+                        const canvas =
+                            document.createElement(
+                                "canvas"
+                            );
+
+                        result.appendChild(canvas);
+
+                        new QRious({
+                            element: canvas,
+                            value: text,
+                            size: 220,
+                            level: "H"
+                        });
+
+                        showToast(
+                            "QR code generated"
+                        );
+                    }
+                );
+        }
+
+
+        /* ---------------------------------------------
+           PERCENTAGE CHANGE
+        --------------------------------------------- */
+
+        if (tool === "change") {
+
+            document
+                .getElementById("changeButton")
+                ?.addEventListener(
+                    "click",
+                    () => {
+
+                        const oldValue =
+                            Number(
+                                document.getElementById(
+                                    "changeOld"
+                                ).value
+                            );
+
+                        const newValue =
+                            Number(
+                                document.getElementById(
+                                    "changeNew"
+                                ).value
+                            );
+
+                        if (
+                            !Number.isFinite(oldValue) ||
+                            !Number.isFinite(newValue) ||
+                            oldValue === 0
+                        ) {
+
+                            showToast(
+                                "Enter valid values"
+                            );
+
+                            return;
+                        }
+
+                        const change =
+                            (
+                                (newValue - oldValue) /
+                                Math.abs(oldValue)
+                            ) * 100;
+
+                        let type;
+
+                        if (change > 0) {
+                            type = "increase";
+                        } else if (change < 0) {
+                            type = "decrease";
+                        } else {
+                            type = "no change";
+                        }
+
+                        document.getElementById(
+                            "changeResult"
+                        ).innerHTML =
+                            `<strong>
+                                ${formatNumber(
+                                    Math.abs(change),
+                                    2
+                                )}%
+                            </strong>
+                            ${type}`;
+                    }
+                );
+        }
+
+
+        /* ---------------------------------------------
+           TIME DIFFERENCE
+        --------------------------------------------- */
+
+        if (tool === "timecalc") {
+
+            document
+                .getElementById("timeButton")
+                ?.addEventListener(
+                    "click",
+                    () => {
+
+                        const start =
+                            document.getElementById(
+                                "timeStart"
+                            ).value;
+
+                        const end =
+                            document.getElementById(
+                                "timeEnd"
+                            ).value;
+
+                        if (!start || !end) {
+
+                            showToast(
+                                "Select both times"
+                            );
+
+                            return;
+                        }
+
+                        let [sh, sm] =
+                            start
+                                .split(":")
+                                .map(Number);
+
+                        let [eh, em] =
+                            end
+                                .split(":")
+                                .map(Number);
+
+                        let startMinutes =
+                            sh * 60 + sm;
+
+                        let endMinutes =
+                            eh * 60 + em;
+
+                        if (
+                            endMinutes <
+                            startMinutes
+                        ) {
+
+                            endMinutes +=
+                                24 * 60;
+                        }
+
+                        const difference =
+                            endMinutes -
+                            startMinutes;
+
+                        const hours =
+                            Math.floor(
+                                difference / 60
+                            );
+
+                        const minutes =
+                            difference % 60;
+
+                        document.getElementById(
+                            "timeResult"
+                        ).innerHTML =
+                            `Difference:
+                            <strong>
+                                ${hours}h ${minutes}m
+                            </strong>`;
+                    }
+                );
+        }
+
+
+        /* ---------------------------------------------
+           EXAM COUNTDOWN
+        --------------------------------------------- */
+
+        if (tool === "countdown") {
+
+            document
+                .getElementById("countdownButton")
+                ?.addEventListener(
+                    "click",
+                    () => {
+
+                        const input =
+                            document.getElementById(
+                                "examDate"
+                            );
+
+                        const result =
+                            document.getElementById(
+                                "countdownResult"
+                            );
+
+                        if (!input.value) {
+
+                            showToast(
+                                "Select an exam date"
+                            );
+
+                            return;
+                        }
+
+                        const target =
+                            new Date(
+                                input.value
+                            ).getTime();
+
+                        if (
+                            target <= Date.now()
+                        ) {
+
+                            result.innerHTML =
+                                "The selected date has passed.";
+
+                            return;
+                        }
+
+                        clearInterval(
+                            countdownInterval
+                        );
+
+                        function updateCountdown() {
+
+                            const remaining =
+                                target -
+                                Date.now();
+
+                            if (
+                                remaining <= 0
+                            ) {
+
+                                clearInterval(
+                                    countdownInterval
+                                );
+
+                                result.innerHTML =
+                                    `<strong>
+                                        Time's up!
+                                    </strong>`;
+
+                                return;
+                            }
+
+                            const days =
+                                Math.floor(
+                                    remaining /
+                                    (1000 * 60 * 60 * 24)
+                                );
+
+                            const hours =
+                                Math.floor(
+                                    (
+                                        remaining /
+                                        (1000 * 60 * 60)
+                                    ) % 24
+                                );
+
+                            const minutes =
+                                Math.floor(
+                                    (
+                                        remaining /
+                                        (1000 * 60)
+                                    ) % 60
+                                );
+
+                            const seconds =
+                                Math.floor(
+                                    (
+                                        remaining /
+                                        1000
+                                    ) % 60
+                                );
+
+                            result.innerHTML =
+                                `<strong>
+                                    ${days}d
+                                    ${hours}h
+                                    ${minutes}m
+                                    ${seconds}s
+                                </strong>
+                                <br>
+                                remaining until your exam`;
+                        }
+
+                        updateCountdown();
+
+                        countdownInterval =
+                            setInterval(
+                                updateCountdown,
+                                1000
+                            );
+                    }
+                );
         }
     }
 
 
-    /* ==============================
+    /* =====================================================
+       SEARCH
+       ===================================================== */
+
+    searchInput?.addEventListener(
+        "input",
+        filterTools
+    );
+
+
+    function filterTools() {
+
+        const query =
+            searchInput.value
+                .toLowerCase()
+                .trim();
+
+        const activeTab =
+            document.querySelector(
+                ".category-tab.active"
+            );
+
+        const category =
+            activeTab?.dataset.category ||
+            "all";
+
+        let visible = 0;
+
+        document
+            .querySelectorAll(".tool-card")
+            .forEach(card => {
+
+                const name =
+                    (
+                        card.dataset.name ||
+                        ""
+                    ).toLowerCase();
+
+                const cardCategory =
+                    card.dataset.category ||
+                    "";
+
+                const matchesSearch =
+                    !query ||
+                    name.includes(query) ||
+                    card.textContent
+                        .toLowerCase()
+                        .includes(query);
+
+                const matchesCategory =
+                    category === "all" ||
+                    cardCategory === category;
+
+                if (
+                    matchesSearch &&
+                    matchesCategory
+                ) {
+
+                    card.style.display = "";
+                    visible++;
+
+                } else {
+
+                    card.style.display =
+                        "none";
+                }
+            });
+
+        if (noTools) {
+
+            noTools.style.display =
+                visible === 0
+                    ? "block"
+                    : "none";
+        }
+    }
+
+
+    /* =====================================================
+       CATEGORY TABS
+       ===================================================== */
+
+    document
+        .querySelectorAll(".category-tab")
+        .forEach(tab => {
+
+            tab.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(
+                            ".category-tab"
+                        )
+                        .forEach(item => {
+                            item.classList.remove(
+                                "active"
+                            );
+                        });
+
+                    tab.classList.add(
+                        "active"
+                    );
+
+                    filterTools();
+                }
+            );
+        });
+
+
+    /* =====================================================
+       FAVORITES
+       ===================================================== */
+
+    document
+        .querySelectorAll(".favorite-button")
+        .forEach(button => {
+
+            const card =
+                button.closest(".tool-card");
+
+            if (!card) return;
+
+            const tool =
+                card.dataset.tool;
+
+            updateFavoriteButton(
+                button,
+                favorites.includes(tool)
+            );
+
+
+            button.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    if (
+                        favorites.includes(
+                            tool
+                        )
+                    ) {
+
+                        favorites =
+                            favorites.filter(
+                                item =>
+                                    item !== tool
+                            );
+
+                        updateFavoriteButton(
+                            button,
+                            false
+                        );
+
+                        showToast(
+                            "Removed from favorites"
+                        );
+
+                    } else {
+
+                        favorites.push(
+                            tool
+                        );
+
+                        updateFavoriteButton(
+                            button,
+                            true
+                        );
+
+                        showToast(
+                            "Added to favorites"
+                        );
+                    }
+
+                    localStorage.setItem(
+                        "studenttools_favorites",
+                        JSON.stringify(
+                            favorites
+                        )
+                    );
+                }
+            );
+        });
+
+
+    function updateFavoriteButton(
+        button,
+        active
+    ) {
+
+        if (active) {
+
+            button.textContent = "★";
+            button.classList.add(
+                "active"
+            );
+
+        } else {
+
+            button.textContent = "☆";
+            button.classList.remove(
+                "active"
+            );
+        }
+    }
+
+
+    /* =====================================================
        RECENT TOOLS
-    ============================== */
+       ===================================================== */
 
     function saveRecent(tool) {
 
         recent =
-            recent.filter(item => item !== tool);
+            recent.filter(
+                item => item !== tool
+            );
 
         recent.unshift(tool);
 
@@ -1474,6 +2556,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
         recentTools.innerHTML = "";
 
+        if (!recent.length) {
+
+            recentTools.innerHTML =
+                `<span class="recent-placeholder">
+                    Your recently used tools will appear here.
+                </span>`;
+
+            return;
+        }
+
         recent.forEach(tool => {
 
             const card =
@@ -1484,168 +2576,82 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!card) return;
 
             const chip =
-                document.createElement("button");
+                document.createElement(
+                    "button"
+                );
 
-            chip.className = "recent-chip";
+            chip.className =
+                "recent-chip";
 
             chip.textContent =
-                card.dataset.name || tool;
+                card.dataset.name ||
+                tool;
 
-            chip.addEventListener("click", () => {
-                openTool(tool);
-            });
+            chip.addEventListener(
+                "click",
+                () => {
+                    openTool(tool);
+                }
+            );
 
-            recentTools.appendChild(chip);
+            recentTools.appendChild(
+                chip
+            );
         });
     }
+
 
     renderRecent();
 
 
-    /* ==============================
-       SEARCH
-    ============================== */
+    /* =====================================================
+       KEYBOARD SHORTCUTS
+       ===================================================== */
 
-    toolSearch?.addEventListener("input", filterTools);
+    document.addEventListener(
+        "keydown",
+        event => {
 
+            /* Ctrl + K = Search */
 
-    function filterTools() {
+            if (
+                (event.ctrlKey ||
+                    event.metaKey) &&
+                event.key.toLowerCase() === "k"
+            ) {
 
-        const query =
-            toolSearch.value
-            .toLowerCase()
-            .trim();
+                event.preventDefault();
 
-        const active =
-            document.querySelector(
-                ".category-tab.active"
-            )?.dataset.category || "all";
-
-        let count = 0;
-
-        document.querySelectorAll(
-            ".tool-card"
-        ).forEach(card => {
-
-            const name =
-                (card.dataset.name || "")
-                .toLowerCase();
-
-            const category =
-                card.dataset.category || "";
-
-            const matchesSearch =
-                !query ||
-                name.includes(query) ||
-                card.textContent
-                    .toLowerCase()
-                    .includes(query);
-
-            const matchesCategory =
-                active === "all" ||
-                category === active;
-
-            if (matchesSearch && matchesCategory) {
-
-                card.style.display = "";
-                count++;
-
-            } else {
-
-                card.style.display = "none";
-            }
-        });
-
-        if (noTools) {
-            noTools.style.display =
-                count === 0 ? "block" : "none";
-        }
-    }
-
-
-    /* ==============================
-       CATEGORY FILTER
-    ============================== */
-
-    document.querySelectorAll(
-        ".category-tab"
-    ).forEach(tab => {
-
-        tab.addEventListener("click", function () {
-
-            document.querySelectorAll(
-                ".category-tab"
-            ).forEach(t =>
-                t.classList.remove("active")
-            );
-
-            this.classList.add("active");
-
-            filterTools();
-        });
-    });
-
-
-    /* ==============================
-       FAVORITES
-    ============================== */
-
-    document.querySelectorAll(
-        ".favorite-button"
-    ).forEach(button => {
-
-        const card =
-            button.closest(".tool-card");
-
-        if (!card) return;
-
-        const tool =
-            card.dataset.tool;
-
-        if (favorites.includes(tool)) {
-            button.textContent = "★";
-            button.classList.add("active");
-        } else {
-            button.textContent = "☆";
-        }
-
-        button.addEventListener("click", function (event) {
-
-            event.stopPropagation();
-
-            if (favorites.includes(tool)) {
-
-                favorites =
-                    favorites.filter(
-                        item => item !== tool
-                    );
-
-                button.textContent = "☆";
-                button.classList.remove("active");
-
-            } else {
-
-                favorites.push(tool);
-
-                button.textContent = "★";
-                button.classList.add("active");
+                searchInput?.focus();
             }
 
-            localStorage.setItem(
-                "studenttools_favorites",
-                JSON.stringify(favorites)
-            );
-        });
-    });
+
+            /* Escape = Hide workspace */
+
+            if (
+                event.key === "Escape" &&
+                workspace
+            ) {
+
+                workspace.style.display =
+                    "none";
+            }
+        }
+    );
 
 
-    /* ==============================
+    /* =====================================================
        HELPERS
-    ============================== */
+       ===================================================== */
 
-    function format(number, decimals = 4) {
+    function formatNumber(
+        number,
+        decimals = 4
+    ) {
 
-        if (!isFinite(number)) return "Invalid";
+        if (!Number.isFinite(number)) {
+            return "Invalid";
+        }
 
         return Number(
             number.toFixed(decimals)
@@ -1658,9 +2664,12 @@ document.addEventListener("DOMContentLoaded", function () {
         a = Math.abs(a);
         b = Math.abs(b);
 
-        while (b) {
+        while (b !== 0) {
+
             const temp = b;
+
             b = a % b;
+
             a = temp;
         }
 
@@ -1668,28 +2677,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* ==============================
-       KEYBOARD SHORTCUT
-    ============================== */
+    /* =====================================================
+       INITIALIZE
+       ===================================================== */
 
-    document.addEventListener("keydown", function (event) {
-
-        if (
-            (event.ctrlKey || event.metaKey) &&
-            event.key.toLowerCase() === "k"
-        ) {
-
-            event.preventDefault();
-
-            toolSearch?.focus();
-        }
-
-        if (event.key === "Escape") {
-
-            if (workspace) {
-                workspace.style.display = "none";
-            }
-        }
-    });
+    filterTools();
 
 });
